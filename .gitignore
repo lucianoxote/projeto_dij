@@ -1,0 +1,7 @@
+node_modules/
+matriculas.json
+.package-lock.json
+package-lock.json
+*.log
+/tmp/
+.gemini/

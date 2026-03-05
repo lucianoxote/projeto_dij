@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matrículas DIJ – GEDCC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --sage: #DAE2C1;
+      --olive: #6B7A3A;
+      --olive-dk: #4E5A28;
+      --olive-lt: #A8B87A;
+      --white: #FFFFFF;
+      --surface: #F5F7EE;
+      --border: #C5D09A;
+      --text: #2C3A12;
+      --text-muted: #6B7A3A;
+      --danger: #C0392B;
+      --danger-lt: #FDECEA;
+      --success: #27AE60;
+      --warn: #E67E22;
+      --shadow: 0 4px 24px rgba(107, 122, 58, .15);
+      --radius: 14px;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--sage);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--olive-dk);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .3);
+    }
+
+    nav .brand {
+      color: var(--white);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: .5rem;
+    }
+
+    .nav-tabs button {
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, .3);
+      color: rgba(255, 255, 255, .8);
+      padding: .4rem 1.1rem;
+      border-radius: 30px;
+      font-family: 'Outfit', sans-serif;
+      font-size: .9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .25s;
+    }
+
+    .nav-tabs button.active,
+    .nav-tabs button:hover {
+      background: rgba(255, 255, 255, .2);
+      border-color: var(--white);
+      color: var(--white);
+    }
+
+    /* VIEWS */
+    .view {
+      display: none;
+      animation: fadeIn .35s ease;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* FORM */
+    .form-wrapper {
+      max-width: 720px;
+      margin: 2.5rem auto;
+      padding: 0 1rem 4rem;
+    }
+
+    .form-header-card {
+      background: var(--white);
+      border-radius: var(--radius) var(--radius) 0 0;
+      border-top: 10px solid var(--olive);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-bottom: .25rem;
+    }
+
+    .form-header-card .banner-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .form-header-card .header-body {
+      padding: 1.5rem 1.75rem 1.75rem;
+    }
+
+    .form-header-card h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--olive-dk);
+      letter-spacing: .5px;
+      margin-bottom: .75rem;
+    }
+
+    .form-header-card p {
+      font-size: .95rem;
+      line-height: 1.65;
+      color: var(--text);
+      margin-bottom: .5rem;
+    }
+
+    .theme-badge {
+      display: inline-block;
+      background: var(--olive);
+      color: var(--white);
+      font-size: .82rem;
+      font-weight: 600;
+      padding: .3rem .9rem;
+      border-radius: 20px;
+      margin-top: .6rem;
+    }
+
+    .age-info {
+      display: flex;
+      gap: .75rem;
+      margin-top: .9rem;
+      flex-wrap: wrap;
+    }
+
+    .age-tag {
+      background: var(--sage);
+      border: 1px solid var(--border);
+      color: var(--olive-dk);
+      font-size: .82rem;
+      font-weight: 600;
+      padding: .3rem .85rem;
+      border-radius: 20px;
+    }
+
+    .privacy-note {
+      font-size: .8rem;
+      color: var(--text-muted);
+      margin-top: .9rem;
+      font-style: italic;
+    }
+
+    .quote-note {
+      margin-top: .75rem;
+      font-size: .85rem;
+      color: var(--olive-dk);
+      font-weight: 600;
+    }
+
+    .form-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      margin-bottom: .25rem;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+
+    .field-group+.field-group {
+      margin-top: 1.25rem;
+    }
+
+    label {
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    label .req {
+      color: var(--danger);
+      margin-left: .15rem;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="email"],
+    input[type="tel"],
+    textarea,
+    select {
+      width: 100%;
+      padding: .65rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: .93rem;
+      color: var(--text);
+      background: var(--surface);
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--olive);
+      box-shadow: 0 0 0 3px rgba(107, 122, 58, .18);
+      background: var(--white);
+    }
+
+    input.invalid,
+    textarea.invalid {
+      border-color: var(--danger);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: .55rem;
+      margin-top: .25rem;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .6rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+
+    .radio-option:hover {
+      background: var(--sage);
+      border-color: var(--olive-lt);
+    }
+
+    .radio-option input[type="radio"] {
+      accent-color: var(--olive);
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .radio-option span {
+      font-size: .93rem;
+      color: var(--text);
+    }
+
+    .form-actions {
+      background: var(--white);
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 1.5rem 1.75rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .page-indicator {
+      font-size: .83rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .progress-bar .fill {
+      height: 100%;
+      width: 100%;
+      background: var(--olive);
+      border-radius: 4px;
+    }
+
+    .btn-primary {
+      background: var(--olive-dk);
+      color: var(--white);
+      border: none;
+      padding: .75rem 2rem;
+      border-radius: 30px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 12px rgba(78, 90, 40, .3);
+    }
+
+    .btn-primary:hover {
+      background: var(--olive);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(78, 90, 40, .35);
+    }
+
+    .btn-primary:active {
+      transform: none;
+    }
+
+    .btn-primary:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--olive-dk);
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: .88rem;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--olive-dk);
+      color: var(--white);
+      padding: .85rem 2rem;
+      border-radius: 30px;
+      font-size: .95rem;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+      transition: transform .35s cubic-bezier(.34, 1.56, .64, 1);
+      z-index: 999;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #confirmation {
+      display: none;
+      text-align: center;
+      max-width: 520px;
+      margin: 4rem auto;
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 3rem 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    #confirmation.active {
+      display: block;
+      animation: fadeIn .4s;
+    }
+
+    #confirmation .check-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+
+    #confirmation h2 {
+      font-size: 1.6rem;
+      color: var(--olive-dk);
+      margin-bottom: .75rem;
+    }
+
+    #confirmation p {
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    #confirmation button {
+      margin: 0 auto;
+      display: block;
+    }
+
+    /* ADMIN */
+    .admin-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .admin-header h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--olive-dk);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow);
+      border-left: 5px solid var(--olive);
+    }
+
+    .stat-card .stat-val {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--olive-dk);
+      line-height: 1;
+    }
+
+    .stat-card .stat-lbl {
+      font-size: .82rem;
+      color: var(--text-muted);
+      margin-top: .35rem;
+      font-weight: 500;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: .75rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      padding: .6rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: .9rem;
+      background: var(--white);
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--olive);
+    }
+
+    .filter-select {
+      padding: .6rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: .88rem;
+      background: var(--white);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .btn-export {
+      background: var(--olive);
+      color: var(--white);
+      border: none;
+      padding: .6rem 1.25rem;
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .btn-export:hover {
+      background: var(--olive-dk);
+    }
+
+    .table-wrap {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .87rem;
+    }
+
+    thead {
+      background: var(--olive-dk);
+      color: var(--white);
+    }
+
+    thead th {
+      padding: .9rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--sage);
+      transition: background .18s;
+    }
+
+    tbody tr:hover {
+      background: var(--surface);
+    }
+
+    tbody td {
+      padding: .8rem 1rem;
+      vertical-align: top;
+      max-width: 220px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: .2rem .65rem;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    .badge-sim {
+      background: #D4EDDA;
+      color: #1E6B3A;
+    }
+
+    .badge-nao {
+      background: #FDECEA;
+      color: #922B21;
+    }
+
+    .badge-infancia {
+      background: #FEF9C3;
+      color: #7D6608;
+    }
+
+    .badge-juventude {
+      background: #DBEAFE;
+      color: #1E3A8A;
+    }
+
+    .btn-del {
+      background: transparent;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: .85rem;
+      font-weight: 600;
+      padding: .2rem .5rem;
+      border-radius: 6px;
+      transition: background .18s;
+    }
+
+    .btn-del:hover {
+      background: var(--danger-lt);
+    }
+
+    .btn-view {
+      background: transparent;
+      border: 1.5px solid var(--olive-lt);
+      color: var(--olive-dk);
+      cursor: pointer;
+      font-size: .82rem;
+      font-weight: 600;
+      padding: .2rem .7rem;
+      border-radius: 6px;
+      transition: background .18s;
+      margin-right: .25rem;
+    }
+
+    .btn-view:hover {
+      background: var(--sage);
+    }
+
+    .btn-edit {
+      background: transparent;
+      border: 1.5px solid var(--warn);
+      color: var(--warn);
+      cursor: pointer;
+      font-size: .82rem;
+      font-weight: 600;
+      padding: .2rem .7rem;
+      border-radius: 6px;
+      transition: background .18s;
+      margin-right: .25rem;
+    }
+
+    .btn-edit:hover {
+      background: #fef5e7;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+      font-size: 2.5rem;
+      margin-bottom: .75rem;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn .2s;
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2rem;
+      max-width: 620px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .3);
+    }
+
+    .modal h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--olive-dk);
+      margin-bottom: 1.25rem;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--sage);
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .18s;
+    }
+
+    .modal-close:hover {
+      background: var(--border);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .85rem 1.5rem;
+    }
+
+    @media (max-width:500px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .detail-item label {
+      font-size: .75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .detail-item p {
+      font-size: .9rem;
+      color: var(--text);
+      margin-top: .15rem;
+      word-break: break-word;
+    }
+
+    .detail-item.full {
+      grid-column: 1/-1;
+    }
+
+    .detail-separator {
+      grid-column: 1/-1;
+      height: 1px;
+      background: var(--border);
+      margin: .25rem 0;
+    }
+
+    .lock-screen {
+      max-width: 420px;
+      margin: 5rem auto;
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .lock-screen h2 {
+      font-size: 1.4rem;
+      color: var(--olive-dk);
+      margin-bottom: .5rem;
+    }
+
+    .lock-screen p {
+      color: var(--text-muted);
+      font-size: .9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .lock-screen input {
+      max-width: 260px;
+      margin: 0 auto 1rem;
+      display: block;
+      letter-spacing: 3px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .lock-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-msg {
+      color: var(--danger);
+      font-size: .85rem;
+      margin-top: .5rem;
+      min-height: 1.2rem;
+    }
+
+    @media (max-width:600px) {
+      .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .controls-row {
+        flex-direction: column;
+      }
+
+      .search-input {
+        min-width: unset;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="brand">🌿 DIJ – GEDCC</span>
+    <div class="nav-tabs">
+      <button id="tab-form" class="active" onclick="showView('form')">Matrícula</button>
+      <button id="tab-admin" onclick="tryAdmin()">Gerenciar</button>
+    </div>
+  </nav>
+
+  <!-- FORM VIEW -->
+  <div id="view-form" class="view active">
+    <div class="form-wrapper">
+
+      <div class="form-header-card">
+        <img class="banner-img" src="banner.png" alt="Banner DIJ" onerror="this.style.display='none'" />
+        <div class="header-body">
+          <h1>MATRÍCULAS ABERTAS!</h1>
+          <p>
+            A <strong>EVANGELIZAÇÃO PRESENCIAL</strong> do Departamento de Infância e Juventude – DIJ
+            do Grupo Espírita Deus Cristo e Caridade <strong>está de volta!</strong>
+            Para se inscrever, basta preencher o formulário abaixo.
+          </p>
+          <span class="theme-badge">Tema 2026</span>
+          <p style="margin-top:.65rem">
+            <strong>O HOMEM NOVO nasce do HOMEM VELHO:</strong> a arte de conviver com as diferenças
+          </p>
+          <div class="age-info">
+            <span class="age-tag">👶 Infância – 3 a 11 anos</span>
+            <span class="age-tag">🌱 Juventude – a partir de 12 anos</span>
+          </div>
+          <p class="privacy-note">
+            🔒 As informações pessoais contidas neste formulário são de acesso restrito da coordenação
+            da evangelização, a qual resguarda a segurança das informações da família.
+          </p>
+          <p class="quote-note">✨ "Permita que o GEDCC aqueça e ilumine seus caminhos."</p>
+        </div>
+      </div>
+
+      <!-- Dados pessoais -->
+      <div class="form-card" style="border-radius:0">
+        <div class="field-group">
+          <label for="nome">NOME COMPLETO do evangelizando <span class="req">*</span></label>
+          <input type="text" id="nome" placeholder="Nome completo" />
+        </div>
+        <div class="field-group">
+          <label for="responsavel">NOME DOS RESPONSÁVEIS (pai / mãe / tio / tia / avô / avó / etc.) <span
+              class="req">*</span></label>
+          <input type="text" id="responsavel" placeholder="Nome dos responsáveis" />
+        </div>
+        <div class="field-group">
+          <label for="dataNasc">Data de nascimento da criança ou jovem <span class="req">*</span></label>
+          <input type="date" id="dataNasc" />
+        </div>
+        <div class="field-group">
+          <label for="endereco">Endereço <span class="req">*</span></label>
+          <textarea id="endereco" placeholder="Rua, número, bairro, cidade..."></textarea>
+        </div>
+      </div>
+
+      <!-- Contato -->
+      <div class="form-card" style="border-radius:0">
+        <div class="field-group">
+          <label for="celResp">Número do celular / WhatsApp – do responsável <span class="req">*</span></label>
+          <input type="tel" id="celResp" placeholder="(00) 00000-0000" />
+        </div>
+        <div class="field-group">
+          <label for="celCrianca">Número do celular / WhatsApp – da criança ou jovem <span class="req">*</span></label>
+          <input type="tel" id="celCrianca" placeholder="(00) 00000-0000 (ou deixar em branco se não houver)" />
+        </div>
+        <div class="field-group">
+          <label for="email">E-mail da criança ou jovem <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="email@exemplo.com" />
+        </div>
+      </div>
+
+      <!-- Saúde / alimentação -->
+      <div class="form-card" style="border-radius:0">
+        <div class="field-group">
+          <label for="podeComer">O que a criança ou jovem GOSTA e PODE comer durante o lanche? <span
+              class="req">*</span></label>
+          <textarea id="podeComer" placeholder="Ex.: frutas, iogurte, pão com geleia..."></textarea>
+        </div>
+        <div class="field-group">
+          <label for="naoPodeComer">O que a criança ou jovem NÃO PODE comer durante o lanche? <span
+              class="req">*</span></label>
+          <textarea id="naoPodeComer" placeholder="Ex.: amendoim, glúten, lactose..."></textarea>
+        </div>
+        <div class="field-group">
+          <label for="diagnostico">Informe se a criança ou jovem possui algum diagnóstico e se faz uso de algum
+            medicamento <span class="req">*</span></label>
+          <textarea id="diagnostico" placeholder="Descreva aqui ou escreva 'Não se aplica'"></textarea>
+        </div>
+        <div class="field-group">
+          <label for="alergia">Possui alguma alergia? Caso tenha, escrever qual <span class="req">*</span></label>
+          <input type="text" id="alergia" placeholder="Ex.: pólen, latex, medicamentos... ou 'Nenhuma'" />
+        </div>
+      </div>
+
+      <!-- Confirmações -->
+      <div class="form-card" style="border-radius:0">
+        <div class="field-group">
+          <label>Confirma a intenção de participar das atividades do DIJ/GEDCC para o ano de 2026? <em
+              style="font-weight:400;font-size:.82rem">(Início: 12/04/2026)</em> <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="confirmacao" value="Sim" /><span>Sim</span></label>
+            <label class="radio-option"><input type="radio" name="confirmacao" value="Não" /><span>Não</span></label>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Autorizo a divulgação de imagens produzidas durante as atividades de evangelização desta criança ou
+            jovem para as redes sociais da instituição sem fins lucrativos <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="imagens" value="Sim" /><span>Sim</span></label>
+            <label class="radio-option"><input type="radio" name="imagens" value="Não" /><span>Não</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="form-actions">
+        <div style="width:100%">
+          <div class="progress-bar">
+            <div class="fill"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="page-indicator">Página 1 de 1</span>
+            <button class="btn-secondary" type="button" onclick="clearForm()">Limpar formulário</button>
+          </div>
+        </div>
+        <button class="btn-primary" id="btnEnviar" onclick="submitForm()">Enviar</button>
+      </div>
+
+    </div><!-- /form-wrapper -->
+
+    <div id="confirmation">
+      <div class="check-icon">✅</div>
+      <h2>Matrícula registrada!</h2>
+      <p>Obrigado pelo cadastro. Em breve a coordenação do DIJ/GEDCC entrará em contato para mais informações.</p>
+      <button class="btn-primary" onclick="newRegistration()">Nova matrícula</button>
+    </div>
+  </div><!-- /view-form -->
+
+  <!-- ADMIN VIEW -->
+  <div id="view-admin" class="view">
+
+    <div id="lock-screen" class="lock-screen">
+      <div class="lock-icon">🔐</div>
+      <h2>Área Restrita</h2>
+      <p>Esta área é exclusiva para a coordenação do DIJ/GEDCC.</p>
+      <input type="password" id="adminPass" placeholder="Senha" onkeydown="if(event.key==='Enter')checkPass()" />
+      <button class="btn-primary" onclick="checkPass()">Entrar</button>
+      <p class="error-msg" id="passError"></p>
+    </div>
+
+    <div id="admin-panel" style="display:none">
+      <div class="admin-wrapper">
+
+        <div class="admin-header">
+          <h2>📋 Gerenciamento de Matrículas – DIJ 2026</h2>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="handleCSV(event)" />
+            <button class="btn-export" style="background:#2980b9" onclick="importCSV()">⬆ Importar CSV</button>
+            <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
+            <button class="btn-export" style="background:var(--danger)" onclick="lockAdmin()">🔒 Sair</button>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-val" id="st-total">0</div>
+            <div class="stat-lbl">Total de matrículas</div>
+          </div>
+          <div class="stat-card" style="border-color:#7D6608">
+            <div class="stat-val" id="st-infancia">0</div>
+            <div class="stat-lbl">Infância (3–11 anos)</div>
+          </div>
+          <div class="stat-card" style="border-color:#1E3A8A">
+            <div class="stat-val" id="st-juventude">0</div>
+            <div class="stat-lbl">Juventude (12+ anos)</div>
+          </div>
+          <div class="stat-card" style="border-color:var(--success)">
+            <div class="stat-val" id="st-confirmados">0</div>
+            <div class="stat-lbl">Confirmados</div>
+          </div>
+          <div class="stat-card" style="border-color:var(--warn)">
+            <div class="stat-val" id="st-autorizados">0</div>
+            <div class="stat-lbl">Autorizam imagem</div>
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <input class="search-input" type="text" id="searchInput" placeholder="🔍 Buscar por nome, responsável..."
+            oninput="renderTable()" />
+          <select class="filter-select" id="filterFaixa" onchange="renderTable()">
+            <option value="">Todas as faixas</option>
+            <option value="infancia">Infância</option>
+            <option value="juventude">Juventude</option>
+          </select>
+          <select class="filter-select" id="filterConfirm" onchange="renderTable()">
+            <option value="">Todas as confirmações</option>
+            <option value="Sim">Confirmados</option>
+            <option value="Não">Não confirmados</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Responsável</th>
+                <th>Nasc.</th>
+                <th>Faixa</th>
+                <th>Celular Resp.</th>
+                <th>Confirmado</th>
+                <th>Imagem</th>
+                <th>Data matrícula</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div class="empty-state" id="emptyState">
+            <div class="icon">📭</div>
+            <p>Nenhuma matrícula encontrada.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /view-admin -->
+
+  <!-- Modal Detalhes -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h3 id="modalTitle">Detalhes da Matrícula</h3>
+      <div class="detail-grid" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Modal Edição -->
+  <div class="modal-overlay" id="editModalOverlay" onclick="closeEditModal(event)">
+    <div class="modal" style="max-width: 700px;">
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+      <h3>Editar Matrícula</h3>
+      <form id="editForm" onsubmit="event.preventDefault(); updateRecord()">
+        <input type="hidden" id="edit-id" />
+        <div class="detail-grid">
+          <div class="field-group full">
+            <label>Nome completo</label>
+            <input type="text" id="edit-nome" required />
+          </div>
+          <div class="field-group">
+            <label>Responsável</label>
+            <input type="text" id="edit-responsavel" required />
+          </div>
+          <div class="field-group">
+            <label>Data de nascimento</label>
+            <input type="date" id="edit-dataNasc" required />
+          </div>
+          <div class="field-group full">
+            <label>Endereço</label>
+            <textarea id="edit-endereco" required></textarea>
+          </div>
+          <div class="field-group">
+            <label>Celular do responsável</label>
+            <input type="tel" id="edit-celResp" required />
+          </div>
+          <div class="field-group">
+            <label>Celular da criança/jovem</label>
+            <input type="tel" id="edit-celCrianca" />
+          </div>
+          <div class="field-group">
+            <label>E-mail</label>
+            <input type="email" id="edit-email" required />
+          </div>
+          <div class="field-group">
+            <label>Confirmação</label>
+            <select id="edit-confirmacao">
+              <option value="Sim">Sim</option>
+              <option value="Não">Não</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Autoriza Imagem</label>
+            <select id="edit-imagens">
+              <option value="Sim">Sim</option>
+              <option value="Não">Não</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
+          <button type="button" class="btn-secondary" onclick="closeEditModal()"
+            style="text-decoration:none">Cancelar</button>
+          <button type="submit" class="btn-primary">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    // ── Config ──────────────────────────────────────────────
+    const ADMIN_PASSWORD = 'dij2026'; // ← altere aqui
+    const API = 'http://localhost:3000/api/matriculas';
+
+    // Cache local para filtros/busca sem requests repetidas
+    let _cache = [];
+
+    // ── Navigation ─────────────────────────────────────────
+    function showView(view) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-' + view).classList.add('active');
+      document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + view).classList.add('active');
+    }
+
+    function tryAdmin() {
+      showView('admin');
+      if (!sessionStorage.getItem('dij_admin_ok')) {
+        document.getElementById('lock-screen').style.display = 'block';
+        document.getElementById('admin-panel').style.display = 'none';
+      } else {
+        unlockAdmin();
+      }
+    }
+
+    function checkPass() {
+      const val = document.getElementById('adminPass').value;
+      if (val === ADMIN_PASSWORD) {
+        sessionStorage.setItem('dij_admin_ok', '1');
+        document.getElementById('adminPass').value = '';
+        document.getElementById('passError').textContent = '';
+        unlockAdmin();
+      } else {
+        document.getElementById('passError').textContent = '❌ Senha incorreta. Tente novamente.';
+        document.getElementById('adminPass').value = '';
+      }
+    }
+
+    function unlockAdmin() {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('admin-panel').style.display = 'block';
+      loadAndRender();
+    }
+
+    function lockAdmin() {
+      sessionStorage.removeItem('dij_admin_ok');
+      showView('form');
+    }
+
+    // ── API ────────────────────────────────────────────────
+    async function loadAndRender() {
+      try {
+        const res = await fetch(API);
+        if (!res.ok) throw new Error();
+        _cache = await res.json();
+        refreshStats();
+        renderTable();
+      } catch {
+        showToast('⚠ Não foi possível conectar ao servidor. Verifique se ele está rodando.');
+      }
+    }
+
+    // ── Age classification ─────────────────────────────────
+    function getFaixa(dataNasc) {
+      if (!dataNasc) return '–';
+      const hoje = new Date();
+      const nasc = new Date(dataNasc + 'T00:00:00');
+      let anos = hoje.getFullYear() - nasc.getFullYear();
+      const m = hoje.getMonth() - nasc.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) anos--;
+      if (anos < 3) return 'Abaixo da faixa';
+      if (anos <= 11) return 'infancia';
+      return 'juventude';
+    }
+
+    // ── Form ───────────────────────────────────────────────
+    function getField(id) { return document.getElementById(id).value.trim(); }
+    function getRadio(name) {
+      const sel = document.querySelector(`input[name="${name}"]:checked`);
+      return sel ? sel.value : '';
+    }
+
+    const required = ['nome', 'responsavel', 'dataNasc', 'endereco', 'celResp', 'email',
+      'podeComer', 'naoPodeComer', 'diagnostico', 'alergia'];
+
+    function validateForm() {
+      let valid = true;
+      required.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) { el.classList.add('invalid'); valid = false; }
+        else el.classList.remove('invalid');
+      });
+      if (!getRadio('confirmacao') || !getRadio('imagens')) valid = false;
+      if (!valid) showToast('⚠ Preencha todos os campos obrigatórios.');
+      return valid;
+    }
+
+    async function submitForm() {
+      if (!validateForm()) return;
+      const btn = document.getElementById('btnEnviar');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+
+      const record = {
+        nome: getField('nome'),
+        responsavel: getField('responsavel'),
+        dataNasc: getField('dataNasc'),
+        faixa: getFaixa(getField('dataNasc')),
+        endereco: getField('endereco'),
+        celResp: getField('celResp'),
+        celCrianca: getField('celCrianca'),
+        email: getField('email'),
+        podeComer: getField('podeComer'),
+        naoPodeComer: getField('naoPodeComer'),
+        diagnostico: getField('diagnostico'),
+        alergia: getField('alergia'),
+        confirmacao: getRadio('confirmacao'),
+        imagens: getRadio('imagens'),
+      };
+
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record),
+        });
+        if (!res.ok) throw new Error();
+        document.querySelector('.form-wrapper').style.display = 'none';
+        document.getElementById('confirmation').classList.add('active');
+        showToast('✅ Matrícula enviada com sucesso!');
+      } catch {
+        showToast('❌ Erro ao enviar. Verifique se o servidor está rodando.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar';
+      }
+    }
+
+    function clearForm() {
+      required.forEach(id => {
+        const el = document.getElementById(id);
+        el.value = '';
+        el.classList.remove('invalid');
+      });
+      document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+      document.getElementById('celCrianca').value = '';
+      showToast('🧹 Formulário limpo.');
+    }
+
+    function newRegistration() {
+      clearForm();
+      document.querySelector('.form-wrapper').style.display = 'block';
+      document.getElementById('confirmation').classList.remove('active');
+    }
+
+    // ── Admin ──────────────────────────────────────────────
+    function refreshStats() {
+      const rec = _cache;
+      document.getElementById('st-total').textContent = rec.length;
+      document.getElementById('st-infancia').textContent = rec.filter(r => r.faixa === 'infancia').length;
+      document.getElementById('st-juventude').textContent = rec.filter(r => r.faixa === 'juventude').length;
+      document.getElementById('st-confirmados').textContent = rec.filter(r => r.confirmacao === 'Sim').length;
+      document.getElementById('st-autorizados').textContent = rec.filter(r => r.imagens === 'Sim').length;
+    }
+
+    function renderTable() {
+      let rec = [..._cache];
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const fFaixa = document.getElementById('filterFaixa').value;
+      const fConf = document.getElementById('filterConfirm').value;
+
+      if (search) rec = rec.filter(r => (r.nome || '').toLowerCase().includes(search) || (r.responsavel || '').toLowerCase().includes(search));
+      if (fFaixa) rec = rec.filter(r => r.faixa === fFaixa);
+      if (fConf) rec = rec.filter(r => r.confirmacao === fConf);
+
+      const body = document.getElementById('tableBody');
+      body.innerHTML = '';
+      document.getElementById('emptyState').style.display = rec.length ? 'none' : 'block';
+
+      rec.forEach((r, i) => {
+        const faixaBadge = r.faixa === 'infancia'
+          ? '<span class="badge badge-infancia">Infância</span>'
+          : r.faixa === 'juventude'
+            ? '<span class="badge badge-juventude">Juventude</span>'
+            : '<span class="badge">' + esc(r.faixa) + '</span>';
+
+        const nascFormatted = r.dataNasc
+          ? new Date(r.dataNasc + 'T00:00:00').toLocaleDateString('pt-BR')
+          : '–';
+
+        body.innerHTML += [
+          '<tr>',
+          '<td>' + (i + 1) + '</td>',
+          '<td><strong>' + esc(r.nome) + '</strong></td>',
+          '<td>' + esc(r.responsavel) + '</td>',
+          '<td>' + nascFormatted + '</td>',
+          '<td>' + faixaBadge + '</td>',
+          '<td>' + esc(r.celResp) + '</td>',
+          '<td><span class="badge ' + (r.confirmacao === 'Sim' ? 'badge-sim' : 'badge-nao') + '">' + esc(r.confirmacao) + '</span></td>',
+          '<td><span class="badge ' + (r.imagens === 'Sim' ? 'badge-sim' : 'badge-nao') + '">' + esc(r.imagens) + '</span></td>',
+          '<td style="white-space:nowrap;font-size:.8rem">' + esc(r.dataMatricula) + '</td>',
+          '<td style="white-space:nowrap">' +
+          '<button class="btn-view" onclick="openModal(' + r.id + ')">Ver</button>' +
+          '<button class="btn-edit" onclick="openEditModal(' + r.id + ')">Editar</button>' +
+          '<button class="btn-del" onclick="deleteRecord(' + r.id + ')">Excluir</button>' +
+          '</td>',
+          '</tr>'
+        ].join('');
+      });
+    }
+
+    async function deleteRecord(id) {
+      if (!confirm('Deseja excluir esta matrícula? Esta ação não pode ser desfeita.')) return;
+      try {
+        await fetch(API + '/' + id, { method: 'DELETE' });
+        showToast('🗑 Matrícula excluída.');
+        loadAndRender();
+      } catch {
+        showToast('❌ Erro ao excluir.');
+      }
+    }
+
+    function openModal(id) {
+      const r = _cache.find(r => r.id === id);
+      if (!r) return;
+      const nascFormatted = r.dataNasc ? new Date(r.dataNasc + 'T00:00:00').toLocaleDateString('pt-BR') : '–';
+      document.getElementById('modalTitle').textContent = 'Detalhes – ' + r.nome;
+      document.getElementById('modalBody').innerHTML = [
+        '<div class="detail-item full"><label>Nome completo</label><p>' + esc(r.nome) + '</p></div>',
+        '<div class="detail-item"><label>Responsável</label><p>' + esc(r.responsavel) + '</p></div>',
+        '<div class="detail-item"><label>Data de nascimento</label><p>' + nascFormatted + '</p></div>',
+        '<div class="detail-item full"><label>Endereço</label><p>' + esc(r.endereco) + '</p></div>',
+        '<div class="detail-item"><label>Celular do responsável</label><p>' + esc(r.celResp) + '</p></div>',
+        '<div class="detail-item"><label>Celular da criança/jovem</label><p>' + (esc(r.celCrianca) || '–') + '</p></div>',
+        '<div class="detail-item full"><label>E-mail</label><p>' + esc(r.email) + '</p></div>',
+        '<div class="detail-separator"></div>',
+        '<div class="detail-item full"><label>Pode comer</label><p>' + esc(r.podeComer) + '</p></div>',
+        '<div class="detail-item full"><label>Não pode comer</label><p>' + esc(r.naoPodeComer) + '</p></div>',
+        '<div class="detail-item full"><label>Diagnóstico / medicamento</label><p>' + esc(r.diagnostico) + '</p></div>',
+        '<div class="detail-item full"><label>Alergia</label><p>' + esc(r.alergia) + '</p></div>',
+        '<div class="detail-separator"></div>',
+        '<div class="detail-item"><label>Confirmação de participação</label><p>' + esc(r.confirmacao) + '</p></div>',
+        '<div class="detail-item"><label>Autorização de imagem</label><p>' + esc(r.imagens) + '</p></div>',
+        '<div class="detail-item"><label>Faixa etária</label><p>' + esc(r.faixa) + '</p></div>',
+        '<div class="detail-item"><label>Data da matrícula</label><p>' + esc(r.dataMatricula) + '</p></div>',
+      ].join('');
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal(e) {
+      if (!e || e.target === document.getElementById('modalOverlay') || e.currentTarget.tagName === 'BUTTON') {
+        document.getElementById('modalOverlay').classList.remove('active');
+      }
+    }
+
+    function openEditModal(id) {
+      const r = _cache.find(r => r.id === id);
+      if (!r) return;
+      document.getElementById('edit-id').value = r.id;
+      document.getElementById('edit-nome').value = r.nome || '';
+      document.getElementById('edit-responsavel').value = r.responsavel || '';
+      document.getElementById('edit-dataNasc').value = r.dataNasc || '';
+      document.getElementById('edit-endereco').value = r.endereco || '';
+      document.getElementById('edit-celResp').value = r.celResp || '';
+      document.getElementById('edit-celCrianca').value = r.celCrianca || '';
+      document.getElementById('edit-email').value = r.email || '';
+      document.getElementById('edit-confirmacao').value = r.confirmacao || 'Sim';
+      document.getElementById('edit-imagens').value = r.imagens || 'Sim';
+      document.getElementById('editModalOverlay').classList.add('active');
+    }
+
+    function closeEditModal(e) {
+      if (!e || e.target === document.getElementById('editModalOverlay') || e.currentTarget.tagName === 'BUTTON') {
+        document.getElementById('editModalOverlay').classList.remove('active');
+      }
+    }
+
+    async function updateRecord() {
+      const id = document.getElementById('edit-id').value;
+      const record = {
+        nome: document.getElementById('edit-nome').value,
+        responsavel: document.getElementById('edit-responsavel').value,
+        dataNasc: document.getElementById('edit-dataNasc').value,
+        endereco: document.getElementById('edit-endereco').value,
+        celResp: document.getElementById('edit-celResp').value,
+        celCrianca: document.getElementById('edit-celCrianca').value,
+        email: document.getElementById('edit-email').value,
+        confirmacao: document.getElementById('edit-confirmacao').value,
+        imagens: document.getElementById('edit-imagens').value,
+        faixa: getFaixa(document.getElementById('edit-dataNasc').value)
+      };
+
+      try {
+        const res = await fetch(API + '/' + id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record),
+        });
+        if (!res.ok) throw new Error();
+        showToast('✅ Matrícula atualizada com sucesso!');
+        closeEditModal();
+        loadAndRender();
+      } catch {
+        showToast('❌ Erro ao atualizar matrícula.');
+      }
+    }
+
+    // ── CSV Export ─────────────────────────────────────────
+    function exportCSV() {
+      const rec = _cache;
+      if (!rec.length) { showToast('⚠ Nenhum dado para exportar.'); return; }
+
+      const headers = [
+        'Nome', 'Responsável', 'Nascimento', 'Endereço', 'Cel.Responsável',
+        'Cel.Criança/Jovem', 'Email', 'Pode comer', 'Não pode comer',
+        'Diagnóstico', 'Alergia', 'Confirmação', 'Imagem', 'Faixa Etária', 'Data Matrícula'
+      ];
+
+      const rows = rec.map((r, i) => [
+        r.nome, r.responsavel, r.dataNasc, r.endereco, r.celResp,
+        r.celCrianca, r.email, r.podeComer, r.naoPodeComer,
+        r.diagnostico, r.alergia, r.confirmacao, r.imagens, r.faixa, r.dataMatricula
+      ].map(v => '"' + String(v || '').replace(/"/g, '""') + '"'));
+
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'matriculas_dij_2026_' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.click();
+      showToast('📥 CSV exportado com sucesso!');
+    }
+
+    // ── CSV Import ─────────────────────────────────────────
+    function importCSV() {
+      document.getElementById('csvInput').click();
+    }
+
+    async function handleCSV(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const text = event.target.result;
+        const data = parseCSV(text);
+        if (data.length === 0) {
+          showToast('⚠ Arquivo vazio ou inválido.');
+          return;
+        }
+
+        if (!confirm(`Deseja importar ${data.length} registros selecionados?`)) return;
+
+        let success = 0;
+        let error = 0;
+
+        showToast('⏳ Importando registros...');
+
+        for (const raw of data) {
+          // Mapeamento inteligente de colunas (incluindo nomes exatos do formulário original)
+          const record = {
+            nome: raw['NOME COMPLETO do evangelizando:'] || raw['Nome'] || raw['NOME'] || raw['nome'] || raw['NOME COMPLETO'] || '',
+            responsavel: raw['NOME DOS RESPONSÁVEIS (pai/ mãe / tio/ tia/ avô/ avó/ Etc):'] || raw['Responsável'] || raw['RESPONSÁVEL'] || raw['responsavel'] || raw['Responsáveis'] || raw['NOME DOS RESPONSÁVEIS'] || '',
+            dataNasc: formatImportDate(raw['Data de nascimento da criança ou jovem.'] || raw['Nascimento'] || raw['DATA NASCIMENTO'] || raw['nascimento'] || raw['Data de nascimento'] || ''),
+            endereco: raw['Endereço:'] || raw['Endereço'] || raw['ENDEREÇO'] || raw['endereco'] || '',
+            celResp: raw['Número do celular/ Whatsapp - do responsável.'] || raw['Celular'] || raw['CELULAR'] || raw['celular'] || raw['Telefone'] || raw['WhatsApp — do responsável'] || raw['celResp'] || '',
+            celCrianca: raw['Número do celular/ Whatsapp - da criança ou jovem.'] || raw['Celular Criança'] || raw['celular_crianca'] || raw['WhatsApp — da criança'] || raw['Celular da criança ou jovem'] || '',
+            email: raw['Email da criança ou jovem.'] || raw['Email'] || raw['EMAIL'] || raw['email'] || raw['E-mail'] || '',
+            podeComer: raw['  O que a criança ou jovem GOSTA e PODE comer durante o lanche? \n'] || raw['Pode comer'] || raw['pode_comer'] || raw['O que a criança ou jovem GOSTA e PODE comer'] || 'Não informado',
+            naoPodeComer: raw['    O que a criança ou jovem NÃO PODE comer durante o lanche? \n'] || raw['Não pode comer'] || raw['nao_pode_comer'] || raw['O que a criança ou jovem NÃO PODE comer'] || 'Não informado',
+            diagnostico: raw['Informe se a criança ou jovem possui algum diagnóstico e se faz uso de algum medicamento:'] || raw['Diagnóstico'] || raw['diagnostico'] || raw['possuir algum diagnóstico'] || 'Não se aplica',
+            alergia: raw['Possui alguma alergia? Caso tenha escrever qual.'] || raw['Alergia'] || raw['alergia'] || 'Nenhuma',
+            confirmacao: raw['Confirma a intenção de participar das atividades do DIJ/GEDCC para o ano de 2024? Início dia 10/03/2024. '] || raw['Confirmação'] || raw['confirmacao'] || raw['Confirma a intenção de participar'] || 'Sim',
+            imagens: raw['Autorizo a divulgação de imagens produzidas durante as atividades evangelização desta criança ou jovem para as redes sociais da instituição sem fins lucrativos.'] || raw['Imagens'] || raw['imagens'] || raw['Autorizo a divulgação de imagens'] || 'Sim',
+          };
+
+          record.faixa = getFaixa(record.dataNasc);
+
+          try {
+            const res = await fetch(API, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(record),
+            });
+            if (res.ok) success++;
+            else error++;
+          } catch {
+            error++;
+          }
+        }
+
+        showToast(`✅ ${success} importados, ❌ ${error} falhas.`);
+        loadAndRender();
+        e.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    function formatImportDate(d) {
+      if (!d) return '';
+      const parts = d.split(/[\/\-]/);
+      if (parts.length === 3) {
+        if (parts[2].length === 4) return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        if (parts[0].length === 4) return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+      }
+      return d;
+    }
+
+    function parseCSV(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) return [];
+
+      const delimiter = lines[0].includes(';') ? ';' : ',';
+      const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"|"$/g, ''));
+
+      return lines.slice(1).map(line => {
+        const values = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') inQuotes = !inQuotes;
+          else if (char === delimiter && !inQuotes) {
+            values.push(current.trim().replace(/^"|"$/g, ''));
+            current = '';
+          } else {
+            current += char;
+          }
+        }
+        values.push(current.trim().replace(/^"|"$/g, ''));
+
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = values[i] || '';
+        });
+        return obj;
+      });
+    }
+
+    // ── Toast ──────────────────────────────────────────────
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    // ── Helpers ────────────────────────────────────────────
+    function esc(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    document.querySelectorAll('input,textarea').forEach(el => {
+      el.addEventListener('input', () => el.classList.remove('invalid'));
+    });
+  </script>
+</body>
+
+</html>
