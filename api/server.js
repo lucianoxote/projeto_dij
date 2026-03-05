@@ -13,10 +13,14 @@ const DB = path.join(process.cwd(), 'matriculas.json');
 app.use(cors());
 app.use(express.json());
 
-// Serve arquivos estáticos apenas localmente (Vercel cuida disso via vercel.json)
-if (process.env.NODE_ENV !== 'production') {
-  app.use(express.static(path.join(__dirname, '..')));
-}
+// Serve arquivos estáticos da raíz do projeto
+// No Vercel, process.cwd() aponta para a raíz da função/projeto
+app.use(express.static(process.cwd()));
+
+// Rota explícita para a página principal
+app.get('/', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'index.html'));
+});
 
 // ── Helpers de banco de dados ────────────────────────────────
 function lerDados() {
