@@ -4,15 +4,10 @@
         {
             "source": "/api/(.*)",
             "destination": "/api/server.js"
-        }
-    ],
-    "routes": [
-        {
-            "handle": "filesystem"
         },
         {
-            "src": "/(.*)",
-            "dest": "/matriculas.html"
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
