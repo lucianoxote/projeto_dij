@@ -13,6 +13,15 @@ const DB = path.join(process.cwd(), 'matriculas.json');
 app.use(cors());
 app.use(express.json());
 
+// Serve arquivos estáticos da pasta 'public'
+// No Vercel, process.cwd() aponta para a raíz do projeto
+app.use(express.static(path.join(process.cwd(), 'public')));
+
+// Rota para a página principal
+app.get('/', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
+});
+
 // ── Helpers de banco de dados ────────────────────────────────
 function lerDados() {
   if (!fs.existsSync(DB)) return [];

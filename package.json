@@ -2,6 +2,7 @@
   "name": "dij-matriculas",
   "version": "1.0.0",
   "description": "Sistema de matrículas DIJ – GEDCC 2026",
+  "main": "api/server.js",
   "scripts": {
     "start": "node api/server.js"
   },
