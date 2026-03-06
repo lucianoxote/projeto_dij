@@ -5,5 +5,5 @@ echo  Iniciando servidor DIJ - GEDCC 2026...
 echo  Aguarde...
 echo.
 cd /d "%~dp0"
-node server.js
+node api/server.js
 pause
