@@ -58,6 +58,16 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
 });
 
+// GET /api/debug-db — para verificar a conexão em produção (apenas teste)
+app.get('/api/debug-db', (req, res) => {
+  res.json({
+    ok: true,
+    estado: mongoose.connection.readyState, // 1 = conectado
+    banco: mongoose.connection.name,
+    uri_definida: !!process.env.MONGODB_URI
+  });
+});
+
 // ── Rotas ────────────────────────────────────────────────────
 
 // GET /api/matriculas — retorna todas as matrículas
