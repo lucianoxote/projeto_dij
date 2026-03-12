@@ -1,0 +1,10 @@
+{
+  "name": "Projeto DIJ",
+  "version": "1.0.0",
+  "ai_engine": "antigravity",
+  "models": {
+    "default": "gemini-1.5-pro",
+    "fallback": "gemini-1.5-flash"
+  },
+  "root": "."
+}
