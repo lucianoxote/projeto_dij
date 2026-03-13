@@ -1297,11 +1297,27 @@
         <!-- Seção Matrículas -->
         <div id="adm-sec-matriculas" class="admin-section active">
           <div class="stats-row">
-
+            <div class="stat-card">
+              <div class="stat-val" id="st-total">0</div>
+              <div class="stat-lbl">Total de matrículas</div>
+            </div>
+            <div class="stat-card" style="border-color:#7D6608">
+              <div class="stat-val" id="st-infancia">0</div>
+              <div class="stat-lbl">Infância (3–11 anos)</div>
+            </div>
+            <div class="stat-card" style="border-color:#1E3A8A">
+              <div class="stat-val" id="st-juventude">0</div>
+              <div class="stat-lbl">Juventude (12+ anos)</div>
+            </div>
           </div>
 
           <div class="controls-row">
-
+            <input class="search-input" type="text" id="searchInput" placeholder="🔍 Buscar por nome, responsável..."
+              oninput="renderTable()" />
+            <div style="display:flex; gap: .5rem">
+              <button class="btn-export" style="background:#2980b9" onclick="importCSV()">⬆ Importar CSV</button>
+              <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
+            </div>
           </div>
 
           <div class="table-wrap">
