@@ -45,6 +45,33 @@ const matriculaSchema = new mongoose.Schema({
 
 const Matricula = mongoose.model('Matricula', matriculaSchema);
 
+const financeiroSchema = new mongoose.Schema({
+  data: String,
+  descricao: String,
+  valor: Number,
+  tipo: { type: String, enum: ['entrada', 'saida'] },
+  categoria: String, // Doação, Vaquinha, Rifa, etc.
+  id: { type: Number, required: true, unique: true }
+}, { versionKey: false });
+
+const Financeiro = mongoose.model('Financeiro', financeiroSchema);
+
+const recadoSchema = new mongoose.Schema({
+  data: String,
+  texto: String,
+  id: { type: Number, required: true, unique: true }
+}, { versionKey: false });
+
+const Recado = mongoose.model('Recado', recadoSchema);
+
+const galeriaSchema = new mongoose.Schema({
+  url: String,
+  legenda: String,
+  id: { type: Number, required: true, unique: true }
+}, { versionKey: false });
+
+const Galeria = mongoose.model('Galeria', galeriaSchema);
+
 // ── Middleware ──────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
@@ -126,6 +153,121 @@ app.delete('/api/matriculas/:id', async (req, res) => {
   } catch (error) {
     console.error('Erro ao excluir matrícula:', error);
     res.status(500).json({ ok: false, error: 'Erro interno no servidor' });
+  }
+});
+
+// ── Rotas Financeiro ──────────────────────────────────────────
+
+// GET /api/financeiro
+app.get('/api/financeiro', async (req, res) => {
+  try {
+    const dados = await Financeiro.find({}).sort({ id: -1 });
+    res.json(dados);
+  } catch (error) {
+    console.error('Erro ao buscar financeiro:', error);
+    res.status(500).json({ ok: false, error: 'Erro interno no servidor' });
+  }
+});
+
+// POST /api/financeiro
+app.post('/api/financeiro', async (req, res) => {
+  try {
+    const novoId = Date.now();
+    const novaEntrada = new Financeiro({
+      id: novoId,
+      ...req.body
+    });
+    await novaEntrada.save();
+    res.status(201).json({ ok: true, id: novoId });
+  } catch (error) {
+    console.error('Erro ao salvar financeiro:', error);
+    res.status(500).json({ ok: false, error: 'Erro ao salvar registro financeiro' });
+  }
+});
+
+// DELETE /api/financeiro/:id
+app.delete('/api/financeiro/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const excluido = await Financeiro.findOneAndDelete({ id });
+    if (!excluido) return res.status(404).json({ ok: false, msg: 'Não encontrado' });
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Erro ao excluir financeiro:', error);
+    res.status(500).json({ ok: false, error: 'Erro interno no servidor' });
+  }
+});
+
+// UPDATE /api/financeiro/:id
+app.put('/api/financeiro/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const atualizado = await Financeiro.findOneAndUpdate({ id }, req.body, { new: true });
+    if (!atualizado) return res.status(404).json({ ok: false, msg: 'Não encontrado' });
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Erro ao atualizar financeiro:', error);
+    res.status(500).json({ ok: false, error: 'Erro interno no servidor' });
+  }
+});
+
+// ── Rotas Recados ─────────────────────────────────────────────
+
+app.get('/api/recados', async (req, res) => {
+  try {
+    const dados = await Recado.find({}).sort({ id: -1 });
+    res.json(dados);
+  } catch (error) {
+    res.status(500).json({ ok: false });
+  }
+});
+
+app.post('/api/recados', async (req, res) => {
+  try {
+    const novo = new Recado({ id: Date.now(), ...req.body });
+    await novo.save();
+    res.status(201).json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ ok: false });
+  }
+});
+
+app.delete('/api/recados/:id', async (req, res) => {
+  try {
+    await Recado.findOneAndDelete({ id: Number(req.params.id) });
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ ok: false });
+  }
+});
+
+// ── Rotas Galeria ─────────────────────────────────────────────
+
+app.get('/api/galeria', async (req, res) => {
+  try {
+    const dados = await Galeria.find({}).sort({ id: -1 });
+    res.json(dados);
+  } catch (error) {
+    res.status(500).json({ ok: false });
+  }
+});
+
+app.post('/api/galeria', async (req, res) => {
+  try {
+    const novo = new Galeria({ id: Date.now(), ...req.body });
+    await novo.save();
+    res.status(201).json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ ok: false });
+  }
+});
+
+app.delete('/api/galeria/:id', async (req, res) => {
+  try {
+    await Galeria.findOneAndDelete({ id: Number(req.params.id) });
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ ok: false });
   }
 });
 
