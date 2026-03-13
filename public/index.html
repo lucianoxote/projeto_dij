@@ -7,6 +7,7 @@
   <title>Matrículas DIJ – GEDCC</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet" />
+  <meta name="color-scheme" content="light">
   <style>
     *,
     *::before,
@@ -17,48 +18,52 @@
     }
 
     :root {
-      --sage: #DAE2C1;
-      --olive: #6B7A3A;
-      --olive-dk: #4E5A28;
-      --olive-lt: #A8B87A;
+      --sage: #F5F7EE;
+      --olive: #839151;
+      --olive-dk: #2C3A12;
+      --olive-lt: #C5D09A;
       --white: #FFFFFF;
-      --surface: #F5F7EE;
-      --border: #C5D09A;
+      --surface: #FFFFFF;
+      --border: #E8EDD1;
       --text: #2C3A12;
-      --text-muted: #6B7A3A;
-      --danger: #C0392B;
+      --text-muted: #839151;
+      --danger: #CB4335;
       --danger-lt: #FDECEA;
       --success: #27AE60;
-      --warn: #E67E22;
-      --shadow: 0 4px 24px rgba(107, 122, 58, .15);
-      --radius: 14px;
+      --warn: #D68910;
+      --shadow: 0 4px 15px rgba(131, 145, 81, 0.1);
+      --radius: 16px;
     }
 
-    body {
+    html, body {
+      background: #F5F7EE !important;
+      background-color: #F5F7EE !important;
+      color: #2C3A12;
       font-family: 'Outfit', sans-serif;
-      background: var(--sage);
-      color: var(--text);
       min-height: 100vh;
+      margin: 0;
+      padding: 0;
     }
 
     /* NAV */
     nav {
-      background: var(--olive-dk);
+      background: var(--white);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 2rem;
-      height: 60px;
+      height: 70px;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, .3);
+      box-shadow: 0 2px 10px rgba(107, 122, 58, 0.08); /* Suavizado */
+      border-bottom: 2px solid var(--sage);
     }
 
     nav .brand {
-      color: var(--white);
-      font-size: 1.1rem;
-      font-weight: 700;
+      color: var(--olive-dk);
+      font-size: 1.2rem;
+      font-weight: 800;
       letter-spacing: .5px;
     }
 
@@ -67,30 +72,285 @@
       gap: .5rem;
     }
 
-    .nav-tabs button {
+    /* Home Styles - Premium Hero */
+    .hero-premium {
+      width: 100%;
+      background: #F5F7EE !important;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-premium .inner {
+      width: 100%;
+      max-width: 1200px;
+      padding: 2rem 1rem;
+      background: #F5F7EE !important;
+    }
+
+    .banner-frame {
+      width: 100%;
+      padding-top: 28%; /* Altura exata da faixa branca (aprox. 363/1298) */
+      overflow: hidden;
+      border-radius: var(--radius);
+      box-shadow: 0 15px 35px rgba(44, 58, 18, 0.1);
+      position: relative;
+      background: var(--olive); /* Fundo preenchido com o verde (oliva) do projeto para integrar perfeitamente com a imagem */
+    }
+
+    .banner-frame img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: auto;
+      margin-top: -22.5%; /* Move para cima exatamente 292px num container de 1298px (cobre os 290px de preto do topo) */
+      transform: scale(1.02); /* Leve zoom (1%) para evitar que bordas finas escapem no antialiasing das telas */
+      display: block;
+    }
+
+    .welcome-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .welcome-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--olive-dk);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .welcome-header p {
+      font-size: 1.1rem;
+      color: var(--olive);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .home-hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem 4rem;
+    }
+
+    .info-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border-top: 5px solid var(--olive);
+    }
+
+    .info-card h3 {
+      font-size: 1.5rem;
+      color: var(--olive-dk);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .announcement-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--sage);
+    }
+
+    .announcement-item:last-child {
+      border-bottom: none;
+    }
+
+    .announcement-date {
+      font-size: .8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .event-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .event-img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform .3s;
+      cursor: pointer;
+    }
+
+    .event-img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Admin Content Management */
+    .admin-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--sage);
+      padding-bottom: .5rem;
+    }
+
+    .admin-tabs button {
       background: transparent;
-      border: 2px solid rgba(255, 255, 255, .3);
-      color: rgba(255, 255, 255, .8);
-      padding: .4rem 1.1rem;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: .5rem 1rem;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .admin-tabs button.active {
+      color: var(--olive-dk);
+    }
+
+    .admin-tabs button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -0.5rem;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--olive-dk);
+    }
+
+    .admin-section {
+      display: none;
+    }
+
+    .admin-section.active {
+      display: block;
+    }
+
+    .mgmt-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .mgmt-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quick-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .link-card {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      width: 160px;
+      cursor: pointer;
+      transition: all .2s;
+      border: 2px solid transparent;
+    }
+
+    .link-card:hover {
+      border-color: var(--olive);
+      transform: translateY(-5px);
+    }
+
+    .link-card i {
+      font-size: 2rem;
+    }
+
+    /* Finance Styles */
+    .finance-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .fin-card {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .fin-card.entrada { border-top: 5px solid var(--success); }
+    .fin-card.saida { border-top: 5px solid var(--danger); }
+    .fin-card.saldo { border-top: 5px solid var(--olive); }
+
+    .fin-val {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin: .5rem 0;
+    }
+
+    .fin-label {
+      font-size: .85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .nav-tabs button {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      color: var(--olive-dk);
+      padding: .45rem 1.2rem;
       border-radius: 30px;
       font-family: 'Outfit', sans-serif;
       font-size: .9rem;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      transition: all .25s;
+      transition: all .2s;
     }
 
     .nav-tabs button.active,
     .nav-tabs button:hover {
-      background: rgba(255, 255, 255, .2);
-      border-color: var(--white);
+      background: var(--olive);
+      border-color: var(--olive);
       color: var(--white);
+      box-shadow: 0 4px 12px rgba(107, 122, 58, 0.2);
     }
 
     /* VIEWS */
     .view {
       display: none;
       animation: fadeIn .35s ease;
+      background: #F5F7EE;
+      min-height: calc(100vh - 70px);
     }
 
     .view.active {
@@ -820,13 +1080,48 @@
   <nav>
     <span class="brand">🌿 DIJ – GEDCC</span>
     <div class="nav-tabs">
-      <button id="tab-form" class="active" onclick="showView('form')">Matrícula</button>
+      <button id="tab-home" class="active" onclick="showView('home')">Início</button>
+      <button id="tab-form" onclick="showView('form')">Matrícula</button>
+      <button id="tab-financeiro" onclick="tryFinanceiro()">Financeiro</button>
       <button id="tab-admin" onclick="tryAdmin()">Gerenciar</button>
     </div>
   </nav>
 
+  <!-- HOME VIEW -->
+  <div id="view-home" class="view active" style="background: #F5F7EE !important;">
+    <!-- Banner Principal Premium -->
+    <section class="hero-premium">
+      <div class="inner">
+        <div class="welcome-header">
+          <h1>Bem-vindo(a) à Evangelização DIJ!</h1>
+          <p>Grupo Espírita Deus Cristo e Caridade – GEDCC</p>
+        </div>
+        <div class="banner-frame">
+          <img src="banner.png" alt="Banner DIJ">
+        </div>
+      </div>
+    </section>
+
+    <div class="home-grid" style="padding-top: 2rem;">
+      <div class="info-card">
+        <h3><i>📢</i> Recados</h3>
+        <div id="home-recados-list">
+          <p style="color:var(--text-muted); font-style:italic">Carregando recados...</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h3><i>📸</i> Galeria de Eventos</h3>
+        <div class="event-gallery" id="home-galeria-grid">
+          <!-- Carregado via JS -->
+        </div>
+        <p style="margin-top:1rem; font-size:.85rem; color:var(--text-muted); text-align:center">Nossa história em cada sorriso.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- FORM VIEW -->
-  <div id="view-form" class="view active">
+  <div id="view-form" class="view">
     <div class="form-wrapper">
 
       <div class="form-header-card">
@@ -961,7 +1256,7 @@
   <!-- ADMIN VIEW -->
   <div id="view-admin" class="view">
 
-    <div id="lock-screen" class="lock-screen">
+    <div id="lock-screen-admin" class="lock-screen" style="display:none">
       <div class="lock-icon">🔐</div>
       <h2>Área Restrita</h2>
       <p>Esta área é exclusiva para a coordenação do DIJ/GEDCC.</p>
@@ -974,75 +1269,87 @@
       <div class="admin-wrapper">
 
         <div class="admin-header">
-          <h2>📋 Gerenciamento de Matrículas – DIJ 2026</h2>
-          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-            <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="handleCSV(event)" />
-            <button class="btn-export" style="background:#2980b9" onclick="importCSV()">⬆ Importar CSV</button>
-            <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
-            <button class="btn-export" style="background:var(--danger)" onclick="lockAdmin()">🔒 Sair</button>
+          <h2>⚙️ Painel de Controle</h2>
+          <button class="btn-export" style="background:var(--danger)" onclick="lockAdmin()">🔒 Sair</button>
+        </div>
+
+        <div class="admin-tabs">
+          <button id="adm-tab-matriculas" class="active" onclick="showAdminSection('matriculas')">Matrículas</button>
+          <button id="adm-tab-recados" onclick="showAdminSection('recados')">Recados (Home)</button>
+          <button id="adm-tab-galeria" onclick="showAdminSection('galeria')">Fotos (Home)</button>
+        </div>
+
+        <!-- Seção Matrículas -->
+        <div id="adm-sec-matriculas" class="admin-section active">
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-val" id="st-total">0</div>
+              <div class="stat-lbl">Total de matrículas</div>
+            </div>
+            <div class="stat-card" style="border-color:#7D6608">
+              <div class="stat-val" id="st-infancia">0</div>
+              <div class="stat-lbl">Infância (3–11 anos)</div>
+            </div>
+            <div class="stat-card" style="border-color:#1E3A8A">
+              <div class="stat-val" id="st-juventude">0</div>
+              <div class="stat-lbl">Juventude (12+ anos)</div>
+            </div>
+          </div>
+
+          <div class="controls-row">
+            <input class="search-input" type="text" id="searchInput" placeholder="🔍 Buscar por nome, responsável..." oninput="renderTable()" />
+            <div style="display:flex; gap: .5rem">
+              <button class="btn-export" style="background:#2980b9" onclick="importCSV()">⬆ Importar CSV</button>
+              <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nome</th>
+                  <th>Responsável</th>
+                  <th>Nasc.</th>
+                  <th>Faixa</th>
+                  <th>Confirmado</th>
+                  <th>Imagem</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+            <div class="empty-state" id="emptyState">
+              <div class="icon">📭</div>
+              <p>Nenhuma matrícula encontrada.</p>
+            </div>
           </div>
         </div>
 
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-val" id="st-total">0</div>
-            <div class="stat-lbl">Total de matrículas</div>
+        <!-- Seção Recados -->
+        <div id="adm-sec-recados" class="admin-section">
+          <div class="form-card" style="margin-bottom: 2rem">
+            <h4>Adicionar Novo Recado</h4>
+            <div style="display:flex; gap: 1rem; margin-top: 1rem">
+              <input type="text" id="new-recado-text" placeholder="Digite o recado aqui..." style="flex:1">
+              <button class="btn-primary" onclick="addRecado()">Postar</button>
+            </div>
           </div>
-          <div class="stat-card" style="border-color:#7D6608">
-            <div class="stat-val" id="st-infancia">0</div>
-            <div class="stat-lbl">Infância (3–11 anos)</div>
-          </div>
-          <div class="stat-card" style="border-color:#1E3A8A">
-            <div class="stat-val" id="st-juventude">0</div>
-            <div class="stat-lbl">Juventude (12+ anos)</div>
-          </div>
-          <div class="stat-card" style="border-color:var(--success)">
-            <div class="stat-val" id="st-confirmados">0</div>
-            <div class="stat-lbl">Confirmados</div>
-          </div>
-          <div class="stat-card" style="border-color:var(--warn)">
-            <div class="stat-val" id="st-autorizados">0</div>
-            <div class="stat-lbl">Autorizam imagem</div>
-          </div>
+          <div id="mgmt-recados-list" class="mgmt-grid"></div>
         </div>
 
-        <div class="controls-row">
-          <input class="search-input" type="text" id="searchInput" placeholder="🔍 Buscar por nome, responsável..."
-            oninput="renderTable()" />
-          <select class="filter-select" id="filterFaixa" onchange="renderTable()">
-            <option value="">Todas as faixas</option>
-            <option value="infancia">Infância</option>
-            <option value="juventude">Juventude</option>
-          </select>
-          <select class="filter-select" id="filterConfirm" onchange="renderTable()">
-            <option value="">Todas as confirmações</option>
-            <option value="Sim">Confirmados</option>
-            <option value="Não">Não confirmados</option>
-          </select>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nome</th>
-                <th>Responsável</th>
-                <th>Nasc.</th>
-                <th>Faixa</th>
-                <th>Celular Resp.</th>
-                <th>Confirmado</th>
-                <th>Imagem</th>
-                <th>Data matrícula</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-          </table>
-          <div class="empty-state" id="emptyState">
-            <div class="icon">📭</div>
-            <p>Nenhuma matrícula encontrada.</p>
+        <!-- Seção Galeria -->
+        <div id="adm-sec-galeria" class="admin-section">
+          <div class="form-card" style="margin-bottom: 2rem">
+            <h4>Adicionar Nova Foto</h4>
+            <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; margin-top: 1rem">
+              <input type="text" id="new-galeria-url" placeholder="Link da imagem (ou cole aqui)">
+              <input type="text" id="new-galeria-legenda" placeholder="Legenda (opcional)">
+              <button class="btn-primary" onclick="addGaleria()">Adicionar</button>
+            </div>
           </div>
+          <div id="mgmt-galeria-grid" class="mgmt-grid"></div>
         </div>
 
       </div>
@@ -1119,6 +1426,94 @@
     </div>
   </div>
 
+  <div id="view-financeiro" class="view">
+    <div class="admin-wrapper" style="max-width: 900px">
+      <div class="admin-header">
+        <h2>💰 Gestão Financeira</h2>
+        <button class="btn-primary" onclick="openFinanceModal()">+ Novo Lançamento</button>
+      </div>
+
+      <div class="finance-summary">
+        <div class="fin-card entrada">
+          <div class="fin-label">Total Entradas</div>
+          <div class="fin-val" id="fin-total-entrada">R$ 0,00</div>
+        </div>
+        <div class="fin-card saida">
+          <div class="fin-label">Total Saídas</div>
+          <div class="fin-val" id="fin-total-saida">R$ 0,00</div>
+        </div>
+        <div class="fin-card saldo">
+          <div class="fin-label">Saldo em Caixa</div>
+          <div class="fin-val" id="fin-saldo">R$ 0,00</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Descrição</th>
+              <th>Categoria</th>
+              <th>Valor</th>
+              <th>Tipo</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="financeBody"></tbody>
+        </table>
+        <div class="empty-state" id="financeEmptyState">
+          <div class="icon">💸</div>
+          <p>Nenhum lançamento financeiro.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Financeiro -->
+  <div class="modal-overlay" id="financeModalOverlay" onclick="closeFinanceModal(event)">
+    <div class="modal" style="max-width: 500px">
+      <button class="modal-close" onclick="closeFinanceModal()">✕</button>
+      <h3>Novo Lançamento</h3>
+      <form id="financeForm" onsubmit="event.preventDefault(); saveFinance()">
+        <div class="field-group">
+          <label>Data</label>
+          <input type="date" id="fin-data" required />
+        </div>
+        <div class="field-group">
+          <label>Descrição</label>
+          <input type="text" id="fin-descricao" placeholder="Ex: Doação Almoço, Compra de papel..." required />
+        </div>
+        <div class="field-group">
+          <label>Valor (R$)</label>
+          <input type="number" step="0.01" id="fin-valor" placeholder="0,00" required />
+        </div>
+        <div class="field-group">
+          <label>Tipo</label>
+          <select id="fin-tipo">
+            <option value="entrada">Entrada (+)</option>
+            <option value="saida">Saída (-)</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Categoria</label>
+          <select id="fin-categoria">
+            <option value="Doação">Doação</option>
+            <option value="Vaquinha">Vaquinha</option>
+            <option value="Rifa">Rifa</option>
+            <option value="Evento">Evento</option>
+            <option value="Material">Material</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+        <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
+          <button type="button" class="btn-secondary" onclick="closeFinanceModal()" style="text-decoration:none">Cancelar</button>
+          <button type="submit" class="btn-primary">Salvar Lançamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="toast"></div>
 
   <script>
@@ -1130,20 +1525,49 @@
     let _cache = [];
 
     // ── Navigation ─────────────────────────────────────────
-    function showView(view) {
+    function showView(view, tab = null) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.getElementById('view-' + view).classList.add('active');
+      const targetView = document.getElementById('view-' + view);
+      if (targetView) targetView.classList.add('active');
+      
       document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
-      document.getElementById('tab-' + view).classList.add('active');
+      const targetTab = document.getElementById('tab-' + (tab || view));
+      if (targetTab) targetTab.classList.add('active');
+      
+      if (view === 'home') loadHomeData();
+    }
+
+    function showAdminSection(sec) {
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('adm-sec-' + sec).classList.add('active');
+      document.querySelectorAll('.admin-tabs button').forEach(b => b.classList.remove('active'));
+      document.getElementById('adm-tab-' + sec).classList.add('active');
+      
+      if (sec === 'recados') loadRecadosMgmt();
+      if (sec === 'galeria') loadGaleriaMgmt();
     }
 
     function tryAdmin() {
-      showView('admin');
       if (!sessionStorage.getItem('dij_admin_ok')) {
-        document.getElementById('lock-screen').style.display = 'block';
+        showView('admin', 'admin');
+        document.getElementById('lock-screen-admin').style.display = 'block';
         document.getElementById('admin-panel').style.display = 'none';
       } else {
+        showView('admin', 'admin');
         unlockAdmin();
+      }
+    }
+
+    function tryFinanceiro() {
+      if (!sessionStorage.getItem('dij_admin_ok')) {
+        showView('admin', 'financeiro'); // Reusa a tela de senha do admin
+        document.getElementById('lock-screen-admin').style.display = 'block';
+        document.getElementById('admin-panel').style.display = 'none';
+        // Após logar, precisaremos saber que o destino era o financeiro
+        sessionStorage.setItem('dij_redirect', 'financeiro');
+      } else {
+        showView('financeiro', 'financeiro');
+        loadFinanceiro();
       }
     }
 
@@ -1161,9 +1585,17 @@
     }
 
     function unlockAdmin() {
-      document.getElementById('lock-screen').style.display = 'none';
-      document.getElementById('admin-panel').style.display = 'block';
-      loadAndRender();
+      document.getElementById('lock-screen-admin').style.display = 'none';
+      const redirect = sessionStorage.getItem('dij_redirect');
+      if (redirect === 'financeiro') {
+        sessionStorage.removeItem('dij_redirect');
+        showView('financeiro', 'financeiro');
+        loadFinanceiro();
+      } else {
+        document.getElementById('admin-panel').style.display = 'block';
+        showView('admin', 'admin');
+        loadAndRender();
+      }
     }
 
     function lockAdmin() {
@@ -1171,7 +1603,230 @@
       showView('form');
     }
 
+    // ── Financeiro ─────────────────────────────────────────
+    const API_FIN = '/api/financeiro';
+    let _finCache = [];
+
+    async function loadFinanceiro() {
+      try {
+        const res = await fetch(API_FIN);
+        _finCache = await res.json();
+        renderFinanceTable();
+      } catch {
+        showToast('⚠ Erro ao carregar financeiro.');
+      }
+    }
+
+    function renderFinanceTable() {
+      const body = document.getElementById('financeBody');
+      body.innerHTML = '';
+      let ent = 0, sai = 0;
+
+      _finCache.forEach(f => {
+        if (f.tipo === 'entrada') ent += f.valor; else sai += f.valor;
+        const dataF = f.data ? new Date(f.data + 'T00:00:00').toLocaleDateString('pt-BR') : '–';
+        body.innerHTML += `
+          <tr>
+            <td>${dataF}</td>
+            <td><strong>${esc(f.descricao)}</strong></td>
+            <td><span class="badge" style="background:var(--sage)">${esc(f.categoria)}</span></td>
+            <td>R$ ${f.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+            <td><span class="badge ${f.tipo === 'entrada' ? 'badge-sim' : 'badge-nao'}">${f.tipo.toUpperCase()}</span></td>
+            <td>
+              <button class="btn-edit" onclick='openFinanceModal(${JSON.stringify(f)})'>Editar</button>
+              <button class="btn-del" onclick="deleteFinance(${f.id})">Excluir</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById('fin-total-entrada').textContent = `R$ ${ent.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+      document.getElementById('fin-total-saida').textContent = `R$ ${sai.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+      document.getElementById('fin-saldo').textContent = `R$ ${(ent - sai).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+      document.getElementById('financeEmptyState').style.display = _finCache.length ? 'none' : 'block';
+    }
+
+    function openFinanceModal(record = null) {
+      const form = document.getElementById('financeForm');
+      form.reset();
+      
+      if (record) {
+        document.getElementById('fin-data').value = record.data;
+        document.getElementById('fin-descricao').value = record.descricao;
+        document.getElementById('fin-valor').value = record.valor;
+        document.getElementById('fin-tipo').value = record.tipo;
+        document.getElementById('fin-categoria').value = record.categoria;
+        form.dataset.editId = record.id;
+        document.querySelector('#financeModalOverlay h3').textContent = 'Editar Lançamento';
+      } else {
+        document.getElementById('fin-data').value = new Date().toISOString().slice(0, 10);
+        delete form.dataset.editId;
+        document.querySelector('#financeModalOverlay h3').textContent = 'Novo Lançamento';
+      }
+      
+      document.getElementById('financeModalOverlay').classList.add('active');
+    }
+
+    function closeFinanceModal(e) {
+      if (!e || e.target === document.getElementById('financeModalOverlay') || e.currentTarget.tagName === 'BUTTON') {
+        document.getElementById('financeModalOverlay').classList.remove('active');
+      }
+    }
+
+    async function saveFinance() {
+      const record = {
+        data: document.getElementById('fin-data').value,
+        descricao: document.getElementById('fin-descricao').value,
+        valor: parseFloat(document.getElementById('fin-valor').value),
+        tipo: document.getElementById('fin-tipo').value,
+        categoria: document.getElementById('fin-categoria').value
+      };
+
+      try {
+        const editId = document.getElementById('financeForm').dataset.editId;
+        const method = editId ? 'PUT' : 'POST';
+        const url = editId ? `${API_FIN}/${editId}` : API_FIN;
+
+        await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record)
+        });
+        showToast(editId ? '✅ Lançamento atualizado!' : '✅ Lançamento salvo!');
+        closeFinanceModal();
+        loadFinanceiro();
+      } catch {
+        showToast('❌ Erro ao salvar lançamento.');
+      }
+    }
+
+    async function deleteFinance(id) {
+      if (!confirm('Deseja excluir este lançamento?')) return;
+      try {
+        await fetch(API_FIN + '/' + id, { method: 'DELETE' });
+        showToast('🗑 Lançamento excluído.');
+        loadFinanceiro();
+      } catch {
+        showToast('❌ Erro ao excluir.');
+      }
+    }
+
     // ── API ────────────────────────────────────────────────
+    const API_REC = '/api/recados';
+    const API_GAL = '/api/galeria';
+
+    async function loadHomeData() {
+      try {
+        const resR = await fetch(API_REC);
+        const recados = await resR.json();
+        const listR = document.getElementById('home-recados-list');
+        if (listR) {
+          listR.innerHTML = recados.length ? '' : '<p style="color:var(--text-muted); font-style:italic">Nenhum recado no momento.</p>';
+          recados.forEach(r => {
+            const dataF = new Date(r.id).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).toUpperCase();
+            listR.innerHTML += `
+              <div class="announcement-item">
+                <span class="announcement-date">${dataF}</span>
+                <p>${esc(r.texto)}</p>
+              </div>
+            `;
+          });
+        }
+
+        const resG = await fetch(API_GAL);
+        const fotos = await resG.json();
+        const gridG = document.getElementById('home-galeria-grid');
+        if (gridG) {
+          gridG.innerHTML = '';
+          fotos.forEach(f => {
+            gridG.innerHTML += `<img src="${esc(f.url)}" class="event-img" alt="${esc(f.legenda)}" title="${esc(f.legenda)}">`;
+          });
+          if (!fotos.length) {
+            gridG.innerHTML = '<p style="grid-column:1/-1; color:var(--text-muted); text-align:center">Nenhuma foto na galeria.</p>';
+          }
+        }
+      } catch (err) { console.error('Erro ao carregar Home:', err); }
+    }
+
+    async function loadRecadosMgmt() {
+      const res = await fetch(API_REC);
+      const dados = await res.json();
+      const list = document.getElementById('mgmt-recados-list');
+      if (list) {
+        list.innerHTML = '';
+        dados.forEach(r => {
+          list.innerHTML += `
+            <div class="mgmt-card">
+              <span>${esc(r.texto)}</span>
+              <button class="btn-del" onclick="deleteRecado(${r.id})">Excluir</button>
+            </div>
+          `;
+        });
+      }
+    }
+
+    async function addRecado() {
+      const texto = document.getElementById('new-recado-text').value.trim();
+      if (!texto) return;
+      await fetch(API_REC, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto })
+      });
+      document.getElementById('new-recado-text').value = '';
+      loadRecadosMgmt();
+      showToast('✅ Recado postado!');
+    }
+
+    async function deleteRecado(id) {
+      if (!confirm('Excluir recado?')) return;
+      await fetch(`${API_REC}/${id}`, { method: 'DELETE' });
+      loadRecadosMgmt();
+    }
+
+    async function loadGaleriaMgmt() {
+      const res = await fetch(API_GAL);
+      const dados = await res.json();
+      const grid = document.getElementById('mgmt-galeria-grid');
+      if (grid) {
+        grid.innerHTML = '';
+        dados.forEach(f => {
+          grid.innerHTML += `
+            <div class="mgmt-card" style="flex-direction:column; align-items:flex-start; gap: .5rem">
+              <img src="${esc(f.url)}" style="width:100%; height:80px; object-fit:cover; border-radius:4px">
+              <div style="display:flex; justify-content:space-between; width:100%; align-items:center">
+                <span style="font-size: .8rem">${esc(f.legenda || 'Sem legenda')}</span>
+                <button class="btn-del" onclick="deleteGaleria(${f.id})">Excluir</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    async function addGaleria() {
+      const url = document.getElementById('new-galeria-url').value.trim();
+      const legenda = document.getElementById('new-galeria-legenda').value.trim();
+      if (!url) return;
+      await fetch(API_GAL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, legenda })
+      });
+      document.getElementById('new-galeria-url').value = '';
+      document.getElementById('new-galeria-legenda').value = '';
+      loadGaleriaMgmt();
+      showToast('✅ Foto adicionada!');
+    }
+
+    async function deleteGaleria(id) {
+      if (!confirm('Excluir foto?')) return;
+      await fetch(`${API_GAL}/${id}`, { method: 'DELETE' });
+      loadGaleriaMgmt();
+    }
+
+    window.addEventListener('DOMContentLoaded', loadHomeData);
+
     async function loadAndRender() {
       try {
         const res = await fetch(API);
