@@ -35,7 +35,8 @@
       --radius: 16px;
     }
 
-    html, body {
+    html,
+    body {
       background: #F5F7EE !important;
       background-color: #F5F7EE !important;
       color: #2C3A12;
@@ -56,7 +57,8 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 10px rgba(107, 122, 58, 0.08); /* Suavizado */
+      box-shadow: 0 2px 10px rgba(107, 122, 58, 0.08);
+      /* Suavizado */
       border-bottom: 2px solid var(--sage);
     }
 
@@ -94,12 +96,14 @@
 
     .banner-frame {
       width: 100%;
-      padding-top: 28%; /* Altura exata da faixa branca (aprox. 363/1298) */
+      padding-top: 28%;
+      /* Altura exata da faixa branca (aprox. 363/1298) */
       overflow: hidden;
       border-radius: var(--radius);
       box-shadow: 0 15px 35px rgba(44, 58, 18, 0.1);
       position: relative;
-      background: var(--olive); /* Fundo preenchido com o verde (oliva) do projeto para integrar perfeitamente com a imagem */
+      background: var(--olive);
+      /* Fundo preenchido com o verde (oliva) do projeto para integrar perfeitamente com a imagem */
     }
 
     .banner-frame img {
@@ -108,8 +112,10 @@
       left: 0;
       width: 100%;
       height: auto;
-      margin-top: -22.5%; /* Move para cima exatamente 292px num container de 1298px (cobre os 290px de preto do topo) */
-      transform: scale(1.02); /* Leve zoom (1%) para evitar que bordas finas escapem no antialiasing das telas */
+      margin-top: -22.5%;
+      /* Move para cima exatamente 292px num container de 1298px (cobre os 290px de preto do topo) */
+      transform: scale(1.02);
+      /* Leve zoom (1%) para evitar que bordas finas escapem no antialiasing das telas */
       display: block;
     }
 
@@ -307,9 +313,17 @@
       text-align: center;
     }
 
-    .fin-card.entrada { border-top: 5px solid var(--success); }
-    .fin-card.saida { border-top: 5px solid var(--danger); }
-    .fin-card.saldo { border-top: 5px solid var(--olive); }
+    .fin-card.entrada {
+      border-top: 5px solid var(--success);
+    }
+
+    .fin-card.saida {
+      border-top: 5px solid var(--danger);
+    }
+
+    .fin-card.saldo {
+      border-top: 5px solid var(--olive);
+    }
 
     .fin-val {
       font-size: 1.75rem;
@@ -1115,7 +1129,8 @@
         <div class="event-gallery" id="home-galeria-grid">
           <!-- Carregado via JS -->
         </div>
-        <p style="margin-top:1rem; font-size:.85rem; color:var(--text-muted); text-align:center">Nossa história em cada sorriso.</p>
+        <p style="margin-top:1rem; font-size:.85rem; color:var(--text-muted); text-align:center">Nossa história em cada
+          sorriso.</p>
       </div>
     </div>
   </div>
@@ -1282,26 +1297,11 @@
         <!-- Seção Matrículas -->
         <div id="adm-sec-matriculas" class="admin-section active">
           <div class="stats-row">
-            <div class="stat-card">
-              <div class="stat-val" id="st-total">0</div>
-              <div class="stat-lbl">Total de matrículas</div>
-            </div>
-            <div class="stat-card" style="border-color:#7D6608">
-              <div class="stat-val" id="st-infancia">0</div>
-              <div class="stat-lbl">Infância (3–11 anos)</div>
-            </div>
-            <div class="stat-card" style="border-color:#1E3A8A">
-              <div class="stat-val" id="st-juventude">0</div>
-              <div class="stat-lbl">Juventude (12+ anos)</div>
-            </div>
+
           </div>
 
           <div class="controls-row">
-            <input class="search-input" type="text" id="searchInput" placeholder="🔍 Buscar por nome, responsável..." oninput="renderTable()" />
-            <div style="display:flex; gap: .5rem">
-              <button class="btn-export" style="background:#2980b9" onclick="importCSV()">⬆ Importar CSV</button>
-              <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
-            </div>
+
           </div>
 
           <div class="table-wrap">
@@ -1507,7 +1507,8 @@
           </select>
         </div>
         <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
-          <button type="button" class="btn-secondary" onclick="closeFinanceModal()" style="text-decoration:none">Cancelar</button>
+          <button type="button" class="btn-secondary" onclick="closeFinanceModal()"
+            style="text-decoration:none">Cancelar</button>
           <button type="submit" class="btn-primary">Salvar Lançamento</button>
         </div>
       </form>
@@ -1529,11 +1530,11 @@
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       const targetView = document.getElementById('view-' + view);
       if (targetView) targetView.classList.add('active');
-      
+
       document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
       const targetTab = document.getElementById('tab-' + (tab || view));
       if (targetTab) targetTab.classList.add('active');
-      
+
       if (view === 'home') loadHomeData();
     }
 
@@ -1542,7 +1543,7 @@
       document.getElementById('adm-sec-' + sec).classList.add('active');
       document.querySelectorAll('.admin-tabs button').forEach(b => b.classList.remove('active'));
       document.getElementById('adm-tab-' + sec).classList.add('active');
-      
+
       if (sec === 'recados') loadRecadosMgmt();
       if (sec === 'galeria') loadGaleriaMgmt();
     }
@@ -1649,7 +1650,7 @@
     function openFinanceModal(record = null) {
       const form = document.getElementById('financeForm');
       form.reset();
-      
+
       if (record) {
         document.getElementById('fin-data').value = record.data;
         document.getElementById('fin-descricao').value = record.descricao;
@@ -1663,7 +1664,7 @@
         delete form.dataset.editId;
         document.querySelector('#financeModalOverlay h3').textContent = 'Novo Lançamento';
       }
-      
+
       document.getElementById('financeModalOverlay').classList.add('active');
     }
 

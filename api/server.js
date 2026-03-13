@@ -104,14 +104,14 @@ app.post('/api/matriculas', async (req, res) => {
   try {
     const novoId = Date.now();
     const dataMatriculaFormatada = new Date().toLocaleString('pt-BR');
-    
+
     // Cria o documento
-    const novaMatricula = new Matricula({ 
-      id: novoId, 
-      dataMatricula: dataMatriculaFormatada, 
-      ...req.body 
+    const novaMatricula = new Matricula({
+      id: novoId,
+      dataMatricula: dataMatriculaFormatada,
+      ...req.body
     });
-    
+
     await novaMatricula.save();
     res.status(201).json({ ok: true, id: novoId });
   } catch (error) {
@@ -124,14 +124,14 @@ app.post('/api/matriculas', async (req, res) => {
 app.put('/api/matriculas/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
-    
+
     // findOneAndUpdate busca pelo campo "id" customizado
     const atualizado = await Matricula.findOneAndUpdate({ id }, req.body, { new: true });
-    
+
     if (!atualizado) {
       return res.status(404).json({ ok: false, msg: 'Não encontrado' });
     }
-    
+
     res.json({ ok: true });
   } catch (error) {
     console.error('Erro ao atualizar matrícula:', error);
@@ -144,11 +144,11 @@ app.delete('/api/matriculas/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
     const excluido = await Matricula.findOneAndDelete({ id });
-    
+
     if (!excluido) {
       return res.status(404).json({ ok: false, msg: 'Não encontrado' });
     }
-    
+
     res.json({ ok: true });
   } catch (error) {
     console.error('Erro ao excluir matrícula:', error);
