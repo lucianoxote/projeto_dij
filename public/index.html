@@ -1794,7 +1794,7 @@
           list.innerHTML += `
             <div class="mgmt-card">
               <span>${esc(r.texto)}</span>
-              <button class="btn-del" onclick="deleteRecado(${r.id})">Excluir</button>
+              <button class="btn-del" onclick="deleteRecado('${r._id || r.id}')">Excluir</button>
             </div>
           `;
         });
@@ -1804,14 +1804,19 @@
     async function addRecado() {
       const texto = document.getElementById('new-recado-text').value.trim();
       if (!texto) return;
-      await fetch(API_REC, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ texto })
-      });
-      document.getElementById('new-recado-text').value = '';
-      loadRecadosMgmt();
-      showToast('✅ Recado postado!');
+      try {
+        const res = await fetch(API_REC, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ texto })
+        });
+        if (!res.ok) throw new Error();
+        document.getElementById('new-recado-text').value = '';
+        loadRecadosMgmt();
+        showToast('✅ Recado postado!');
+      } catch {
+        showToast('❌ Erro ao postar recado.');
+      }
     }
 
     async function deleteRecado(id) {
@@ -1832,7 +1837,7 @@
               <img src="${esc(f.url)}" style="width:100%; height:80px; object-fit:cover; border-radius:4px">
               <div style="display:flex; justify-content:space-between; width:100%; align-items:center">
                 <span style="font-size: .8rem">${esc(f.legenda || 'Sem legenda')}</span>
-                <button class="btn-del" onclick="deleteGaleria(${f.id})">Excluir</button>
+                <button class="btn-del" onclick="deleteGaleria('${f._id || f.id}')">Excluir</button>
               </div>
             </div>
           `;
@@ -1844,15 +1849,20 @@
       const url = document.getElementById('new-galeria-url').value.trim();
       const legenda = document.getElementById('new-galeria-legenda').value.trim();
       if (!url) return;
-      await fetch(API_GAL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, legenda })
-      });
-      document.getElementById('new-galeria-url').value = '';
-      document.getElementById('new-galeria-legenda').value = '';
-      loadGaleriaMgmt();
-      showToast('✅ Foto adicionada!');
+      try {
+        const res = await fetch(API_GAL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, legenda })
+        });
+        if (!res.ok) throw new Error();
+        document.getElementById('new-galeria-url').value = '';
+        document.getElementById('new-galeria-legenda').value = '';
+        loadGaleriaMgmt();
+        showToast('✅ Foto adicionada!');
+      } catch {
+        showToast('❌ Erro ao salvar foto. Verifique o link.');
+      }
     }
 
     async function deleteGaleria(id) {

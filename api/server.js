@@ -231,7 +231,7 @@ app.get('/api/recados', async (req, res) => {
 
 app.post('/api/recados', async (req, res) => {
   try {
-    const novo = new Recado({ id: Date.now(), ...req.body });
+    const novo = new Recado({ id: Date.now() + Math.random(), ...req.body });
     await novo.save();
     res.status(201).json({ ok: true });
   } catch (error) {
@@ -241,7 +241,8 @@ app.post('/api/recados', async (req, res) => {
 
 app.delete('/api/recados/:id', async (req, res) => {
   try {
-    await Recado.findOneAndDelete({ id: Number(req.params.id) });
+    const query = mongoose.Types.ObjectId.isValid(req.params.id) ? { _id: req.params.id } : { id: Number(req.params.id) };
+    await Recado.findOneAndDelete(query);
     res.json({ ok: true });
   } catch (error) {
     res.status(500).json({ ok: false });
@@ -261,7 +262,7 @@ app.get('/api/galeria', async (req, res) => {
 
 app.post('/api/galeria', async (req, res) => {
   try {
-    const novo = new Galeria({ id: Date.now(), ...req.body });
+    const novo = new Galeria({ id: Date.now() + Math.random(), ...req.body });
     await novo.save();
     res.status(201).json({ ok: true });
   } catch (error) {
@@ -271,7 +272,8 @@ app.post('/api/galeria', async (req, res) => {
 
 app.delete('/api/galeria/:id', async (req, res) => {
   try {
-    await Galeria.findOneAndDelete({ id: Number(req.params.id) });
+    const query = mongoose.Types.ObjectId.isValid(req.params.id) ? { _id: req.params.id } : { id: Number(req.params.id) };
+    await Galeria.findOneAndDelete(query);
     res.json({ ok: true });
   } catch (error) {
     res.status(500).json({ ok: false });
