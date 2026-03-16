@@ -1085,6 +1085,35 @@
         width: 100%;
       }
     }
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .92);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      cursor: zoom-out;
+      animation: fadeIn .2s;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 0 30px rgba(0,0,0,.5);
+      cursor: default;
+    }
+    .lightbox .close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -1384,8 +1413,8 @@
                 <input type="text" id="new-galeria-url" placeholder="https://site.com/foto.jpg">
               </div>
               <div class="field-group">
-                <label>OU Carregar do Computador</label>
-                <input type="file" id="new-galeria-file" accept="image/*" onchange="previewFile()">
+                <label>Carregar do Computador (Foto ou Vídeo Curto)</label>
+                <input type="file" id="new-galeria-file" accept="image/*,video/*" onchange="previewFile()">
               </div>
               <div class="field-group">
                 <label>Legenda (opcional)</label>
@@ -1566,6 +1595,12 @@
   </div>
 
   <div id="toast"></div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+    <img id="lightbox-img" src="" alt="Zoom">
+  </div>
 
   <script>
     // ── Config ──────────────────────────────────────────────
@@ -1766,6 +1801,16 @@
     const API_REC = '/api/recados';
     const API_GAL = '/api/galeria';
 
+    function openLightbox(url) {
+      document.getElementById('lightbox-img').src = url;
+      document.getElementById('lightbox').classList.add('active');
+    }
+    function closeLightbox(e) {
+      if (!e || e.target.id === 'lightbox' || e.target.className === 'close') {
+        document.getElementById('lightbox').classList.remove('active');
+      }
+    }
+
     async function loadHomeData() {
       try {
         const resR = await fetch(API_REC);
@@ -1790,7 +1835,19 @@
         if (gridG) {
           gridG.innerHTML = '';
           fotos.forEach(f => {
-            gridG.innerHTML += `<img src="${esc(f.url)}" class="event-img" alt="${esc(f.legenda)}" title="${esc(f.legenda)}">`;
+            if (f.type === 'video') {
+              // Simples detecção de Youtube para embed
+              let videoHtml = '';
+              if (f.url.includes('youtube.com') || f.url.includes('youtu.be')) {
+                const id = f.url.split('v=')[1] || f.url.split('/').pop();
+                videoHtml = `<iframe style="width:100%; height:120px; border-radius:8px; border:none" src="https://www.youtube.com/embed/${id}" title="${esc(f.legenda)}" allowfullscreen></iframe>`;
+              } else {
+                videoHtml = `<video src="${esc(f.url)}" class="event-img" controls style="height:120px"></video>`;
+              }
+              gridG.innerHTML += videoHtml;
+            } else {
+              gridG.innerHTML += `<img src="${esc(f.url)}" class="event-img" alt="${esc(f.legenda)}" title="${esc(f.legenda)}" onclick="openLightbox('${f.url}')">`;
+            }
           });
           if (!fotos.length) {
             gridG.innerHTML = '<p style="grid-column:1/-1; color:var(--text-muted); text-align:center">Nenhuma foto na galeria.</p>';
@@ -1867,7 +1924,13 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          img.src = e.target.result;
+          if (file.type.startsWith('video/')) {
+            img.style.display = 'none';
+            preview.innerHTML += '<span style="color:var(--olive); font-weight:600">Video selecionado! 🎥</span>';
+          } else {
+            img.src = e.target.result;
+            img.style.display = 'block';
+          }
           preview.style.display = 'block';
         };
         reader.readAsDataURL(file);
@@ -1892,17 +1955,15 @@
         });
       }
 
-      if (!finalUrl) {
-        showToast('⚠ Forneça um link ou selecione uma foto.');
-        return;
-      }
+      const isVideo = finalUrl.includes('youtube.com') || finalUrl.includes('youtu.be') || fileInput?.type.startsWith('video/');
+      const type = isVideo ? 'video' : 'image';
 
       try {
-        showToast('⏳ Processando imagem...');
+        showToast('⏳ Processando mídia...');
         const res = await fetch(API_GAL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: finalUrl, legenda })
+          body: JSON.stringify({ url: finalUrl, legenda, type })
         });
         if (!res.ok) throw new Error();
         

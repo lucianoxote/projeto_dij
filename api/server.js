@@ -67,6 +67,7 @@ const Recado = mongoose.model('Recado', recadoSchema);
 const galeriaSchema = new mongoose.Schema({
   url: String,
   legenda: String,
+  type: { type: String, default: 'image' }, // 'image' ou 'video'
   id: { type: Number, required: true, unique: true }
 }, { versionKey: false });
 
