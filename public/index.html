@@ -2026,9 +2026,9 @@
           '<td><span class="badge ' + (r.imagens === 'Sim' ? 'badge-sim' : 'badge-nao') + '">' + esc(r.imagens) + '</span></td>',
           '<td style="white-space:nowrap;font-size:.8rem">' + esc(r.dataMatricula) + '</td>',
           '<td style="white-space:nowrap">' +
-          '<button class="btn-view" onclick="openModal(' + r.id + ')">Ver</button>' +
-          '<button class="btn-edit" onclick="openEditModal(' + r.id + ')">Editar</button>' +
-          '<button class="btn-del" onclick="deleteRecord(' + r.id + ')">Excluir</button>' +
+          '<button class="btn-view" onclick="openModal(\'' + (r._id || r.id) + '\')">Ver</button>' +
+          '<button class="btn-edit" onclick="openEditModal(\'' + (r._id || r.id) + '\')">Editar</button>' +
+          '<button class="btn-del" onclick="deleteRecord(\'' + (r._id || r.id) + '\')">Excluir</button>' +
           '</td>',
           '</tr>'
         ].join('');
@@ -2038,16 +2038,21 @@
     async function deleteRecord(id) {
       if (!confirm('Deseja excluir esta matrícula? Esta ação não pode ser desfeita.')) return;
       try {
-        await fetch(API + '/' + id, { method: 'DELETE' });
+        const res = await fetch(API + '/' + id, { method: 'DELETE' });
+        if (!res.ok) {
+           const errData = await res.json().catch(() => ({}));
+           throw new Error(errData.error || 'Falha ao excluir no servidor');
+        }
         showToast('🗑 Matrícula excluída.');
         loadAndRender();
-      } catch {
-        showToast('❌ Erro ao excluir.');
+      } catch (err) {
+        console.error('Erro ao excluir:', err);
+        showToast('❌ Eror ao excluir: ' + err.message);
       }
     }
 
     function openModal(id) {
-      const r = _cache.find(r => r.id === id);
+      const r = _cache.find(r => r._id === id || r.id == id);
       if (!r) return;
       const nascFormatted = r.dataNasc ? new Date(r.dataNasc + 'T00:00:00').toLocaleDateString('pt-BR') : '–';
       document.getElementById('modalTitle').textContent = 'Detalhes – ' + r.nome;
@@ -2080,9 +2085,9 @@
     }
 
     function openEditModal(id) {
-      const r = _cache.find(r => r.id === id);
+      const r = _cache.find(r => r._id === id || r.id == id);
       if (!r) return;
-      document.getElementById('edit-id').value = r.id;
+      document.getElementById('edit-id').value = r._id || r.id;
       document.getElementById('edit-nome').value = r.nome || '';
       document.getElementById('edit-responsavel').value = r.responsavel || '';
       document.getElementById('edit-dataNasc').value = r.dataNasc || '';

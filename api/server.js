@@ -102,7 +102,8 @@ app.get('/api/matriculas', async (req, res) => {
 // POST /api/matriculas — salva nova matrícula
 app.post('/api/matriculas', async (req, res) => {
   try {
-    const novoId = Date.now();
+    // Cria o documento com um ID baseado em timestamp + aleatório para evitar colisões em loops rápidos
+    const novoId = Date.now() + Math.floor(Math.random() * 1000);
     const dataMatriculaFormatada = new Date().toLocaleString('pt-BR');
 
     // Cria o documento
@@ -123,10 +124,12 @@ app.post('/api/matriculas', async (req, res) => {
 // UPDATE /api/matriculas/:id — atualiza uma matrícula
 app.put('/api/matriculas/:id', async (req, res) => {
   try {
-    const id = Number(req.params.id);
+    // Tenta buscar pelo _id do MongoDB (hexadecimal) ou pelo id customizado (número)
+    const query = mongoose.Types.ObjectId.isValid(req.params.id) 
+      ? { _id: req.params.id } 
+      : { id: Number(req.params.id) };
 
-    // findOneAndUpdate busca pelo campo "id" customizado
-    const atualizado = await Matricula.findOneAndUpdate({ id }, req.body, { new: true });
+    const atualizado = await Matricula.findOneAndUpdate(query, req.body, { new: true });
 
     if (!atualizado) {
       return res.status(404).json({ ok: false, msg: 'Não encontrado' });
@@ -142,8 +145,12 @@ app.put('/api/matriculas/:id', async (req, res) => {
 // DELETE /api/matriculas/:id — exclui uma matrícula
 app.delete('/api/matriculas/:id', async (req, res) => {
   try {
-    const id = Number(req.params.id);
-    const excluido = await Matricula.findOneAndDelete({ id });
+    // Tenta excluir pelo _id do MongoDB ou pelo id customizado
+    const query = mongoose.Types.ObjectId.isValid(req.params.id) 
+      ? { _id: req.params.id } 
+      : { id: Number(req.params.id) };
+
+    const excluido = await Matricula.findOneAndDelete(query);
 
     if (!excluido) {
       return res.status(404).json({ ok: false, msg: 'Não encontrado' });
