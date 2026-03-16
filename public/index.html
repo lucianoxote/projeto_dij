@@ -1309,11 +1309,29 @@
               <div class="stat-val" id="st-juventude">0</div>
               <div class="stat-lbl">Juventude (12+ anos)</div>
             </div>
+            <div class="stat-card" style="border-color:var(--success)">
+              <div class="stat-val" id="st-confirmados">0</div>
+              <div class="stat-lbl">Confirmados (2026)</div>
+            </div>
+            <div class="stat-card" style="border-color:var(--olive-lt)">
+              <div class="stat-val" id="st-autorizados">0</div>
+              <div class="stat-lbl">Autorizam Imagem</div>
+            </div>
           </div>
 
           <div class="controls-row">
             <input class="search-input" type="text" id="searchInput" placeholder="🔍 Buscar por nome, responsável..."
               oninput="renderTable()" />
+            <select class="filter-select" id="filterFaixa" onchange="renderTable()">
+              <option value="">Todas as Faixas</option>
+              <option value="infancia">👶 Infância</option>
+              <option value="juventude">🌱 Juventude</option>
+            </select>
+            <select class="filter-select" id="filterConfirm" onchange="renderTable()">
+              <option value="">Todos Status</option>
+              <option value="Sim">✅ Confirmados</option>
+              <option value="Não">❌ Não Confirmados</option>
+            </select>
             <div style="display:flex; gap: .5rem">
               <button class="btn-export" style="background:#2980b9" onclick="importCSV()">⬆ Importar CSV</button>
               <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
@@ -1330,7 +1348,8 @@
                   <th>Nasc.</th>
                   <th>Faixa</th>
                   <th>Confirmado</th>
-                  <th>Imagem</th>
+                  <th>Autoriza Imagem</th>
+                  <th>Data Matrícula</th>
                   <th>Ações</th>
                 </tr>
               </thead>
@@ -1851,8 +1870,9 @@
         _cache = await res.json();
         refreshStats();
         renderTable();
-      } catch {
-        showToast('⚠ Não foi possível conectar ao servidor. Verifique se ele está rodando.');
+      } catch (err) {
+        console.error('Erro ao carregar dados:', err);
+        showToast('⚠ Erro: ' + err.message + '. Verifique o console ou se o servidor está rodando.');
       }
     }
 
@@ -1952,18 +1972,28 @@
     // ── Admin ──────────────────────────────────────────────
     function refreshStats() {
       const rec = _cache;
-      document.getElementById('st-total').textContent = rec.length;
-      document.getElementById('st-infancia').textContent = rec.filter(r => r.faixa === 'infancia').length;
-      document.getElementById('st-juventude').textContent = rec.filter(r => r.faixa === 'juventude').length;
-      document.getElementById('st-confirmados').textContent = rec.filter(r => r.confirmacao === 'Sim').length;
-      document.getElementById('st-autorizados').textContent = rec.filter(r => r.imagens === 'Sim').length;
+      const elTotal = document.getElementById('st-total');
+      const elInfancia = document.getElementById('st-infancia');
+      const elJuventude = document.getElementById('st-juventude');
+      const elConfirmados = document.getElementById('st-confirmados');
+      const elAutorizados = document.getElementById('st-autorizados');
+
+      if (elTotal) elTotal.textContent = rec.length;
+      if (elInfancia) elInfancia.textContent = rec.filter(r => r.faixa === 'infancia').length;
+      if (elJuventude) elJuventude.textContent = rec.filter(r => r.faixa === 'juventude').length;
+      if (elConfirmados) elConfirmados.textContent = rec.filter(r => r.confirmacao === 'Sim').length;
+      if (elAutorizados) elAutorizados.textContent = rec.filter(r => r.imagens === 'Sim').length;
     }
 
     function renderTable() {
       let rec = [..._cache];
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      const fFaixa = document.getElementById('filterFaixa').value;
-      const fConf = document.getElementById('filterConfirm').value;
+      const elSearch = document.getElementById('searchInput');
+      const elFaixa = document.getElementById('filterFaixa');
+      const elConfirm = document.getElementById('filterConfirm');
+
+      const search = elSearch ? elSearch.value.toLowerCase() : '';
+      const fFaixa = elFaixa ? elFaixa.value : '';
+      const fConf = elConfirm ? elConfirm.value : '';
 
       if (search) rec = rec.filter(r => (r.nome || '').toLowerCase().includes(search) || (r.responsavel || '').toLowerCase().includes(search));
       if (fFaixa) rec = rec.filter(r => r.faixa === fFaixa);
