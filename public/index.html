@@ -1378,10 +1378,25 @@
         <div id="adm-sec-galeria" class="admin-section">
           <div class="form-card" style="margin-bottom: 2rem">
             <h4>Adicionar Nova Foto</h4>
-            <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; margin-top: 1rem">
-              <input type="text" id="new-galeria-url" placeholder="Link da imagem (ou cole aqui)">
-              <input type="text" id="new-galeria-legenda" placeholder="Legenda (opcional)">
-              <button class="btn-primary" onclick="addGaleria()">Adicionar</button>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem">
+              <div class="field-group">
+                <label>Link da Imagem (URL)</label>
+                <input type="text" id="new-galeria-url" placeholder="https://site.com/foto.jpg">
+              </div>
+              <div class="field-group">
+                <label>OU Carregar do Computador</label>
+                <input type="file" id="new-galeria-file" accept="image/*" onchange="previewFile()">
+              </div>
+              <div class="field-group">
+                <label>Legenda (opcional)</label>
+                <input type="text" id="new-galeria-legenda" placeholder="Ex: Foto do evento">
+              </div>
+              <div style="display:flex; align-items:flex-end; gap: 1rem">
+                <button class="btn-primary" onclick="addGaleria()">Adicionar</button>
+                <div id="upload-preview" style="display:none">
+                   <img id="preview-img" style="height:40px; border-radius:4px; border:1px solid var(--border)">
+                </div>
+              </div>
             </div>
           </div>
           <div id="mgmt-galeria-grid" class="mgmt-grid"></div>
@@ -1845,23 +1860,62 @@
       }
     }
 
+    function previewFile() {
+      const file = document.getElementById('new-galeria-file').files[0];
+      const preview = document.getElementById('upload-preview');
+      const img = document.getElementById('preview-img');
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          img.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.style.display = 'none';
+      }
+    }
+
     async function addGaleria() {
-      const url = document.getElementById('new-galeria-url').value.trim();
+      const urlInput = document.getElementById('new-galeria-url').value.trim();
+      const fileInput = document.getElementById('new-galeria-file').files[0];
       const legenda = document.getElementById('new-galeria-legenda').value.trim();
-      if (!url) return;
+      
+      let finalUrl = urlInput;
+
+      // Se houver arquivo local, converte para Base64
+      if (fileInput) {
+        finalUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(fileInput);
+        });
+      }
+
+      if (!finalUrl) {
+        showToast('⚠ Forneça um link ou selecione uma foto.');
+        return;
+      }
+
       try {
+        showToast('⏳ Processando imagem...');
         const res = await fetch(API_GAL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, legenda })
+          body: JSON.stringify({ url: finalUrl, legenda })
         });
         if (!res.ok) throw new Error();
+        
         document.getElementById('new-galeria-url').value = '';
+        document.getElementById('new-galeria-file').value = '';
         document.getElementById('new-galeria-legenda').value = '';
+        document.getElementById('upload-preview').style.display = 'none';
+        
         loadGaleriaMgmt();
         showToast('✅ Foto adicionada!');
-      } catch {
-        showToast('❌ Erro ao salvar foto. Verifique o link.');
+      } catch (err) {
+        console.error(err);
+        showToast('❌ Erro ao salvar foto.');
       }
     }
 

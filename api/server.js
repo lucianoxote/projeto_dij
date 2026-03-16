@@ -74,7 +74,8 @@ const Galeria = mongoose.model('Galeria', galeriaSchema);
 
 // ── Middleware ──────────────────────────────────────────────
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Serve arquivos estáticos da pasta 'public'
 // No Vercel, process.cwd() aponta para a raíz do projeto
