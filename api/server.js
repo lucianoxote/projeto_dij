@@ -15,11 +15,16 @@ const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  console.warn('Aviso: MONGODB_URI não definida no ambiente. O servidor pode falhar ao conectar ao banco.');
+  console.error('\n❌ CRÍTICO: MONGODB_URI não está definida! O banco de dados não funcionará.');
+  console.error('Certifique-se de configurar a variável de ambiente no Vercel ou no arquivo .env local.\n');
 } else {
+  console.log('⏳ Tentando conectar ao MongoDB...');
   mongoose.connect(MONGODB_URI)
-    .then(() => console.log('✅ Conectado ao MongoDB'))
-    .catch(err => console.error('❌ Erro de conexão com MongoDB:', err));
+    .then(() => console.log('✅ Conectado ao MongoDB com sucesso!'))
+    .catch(err => {
+      console.error('❌ ERRO AO CONECTAR AO MONGO:', err.message);
+      console.error('Dica: Verifique se o seu IP está liberado no MongoDB Atlas (Network Access).');
+    });
 }
 
 // ── Schema e Modelo Mongoose ─────────────────────────────────
@@ -173,8 +178,8 @@ app.get('/api/financeiro', async (req, res) => {
     const dados = await Financeiro.find({}).sort({ id: -1 });
     res.json(dados);
   } catch (error) {
-    console.error('Erro ao buscar financeiro:', error);
-    res.status(500).json({ ok: false, error: 'Erro interno no servidor' });
+    console.error('❌ ERRO AO BUSCAR FINANCEIRO:', error);
+    res.status(500).json({ ok: false, error: 'Erro interno no servidor: ' + error.message });
   }
 });
 
