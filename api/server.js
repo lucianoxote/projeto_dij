@@ -78,6 +78,29 @@ const galeriaSchema = new mongoose.Schema({
 
 const Galeria = mongoose.model('Galeria', galeriaSchema);
 
+const frequenciaSchema = new mongoose.Schema({
+  matriculaId: Number,
+  data: String, // YYYY-MM-DD
+  presenca: Boolean,
+  id: { type: Number, required: true, unique: true }
+}, { versionKey: false });
+
+const Frequencia = mongoose.model('Frequencia', frequenciaSchema);
+
+const acompanhamentoSchema = new mongoose.Schema({
+  matriculaId: Number,
+  data: String,
+  notaDesempenho: String,
+  metas: String,
+  atividades: String,
+  observacoes: String,
+  id: { type: Number, required: true, unique: true }
+}, { versionKey: false });
+
+const Acompanhamento = mongoose.model('Acompanhamento', acompanhamentoSchema);
+
+
+
 // ── Middleware ──────────────────────────────────────────────
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
@@ -287,7 +310,121 @@ app.delete('/api/galeria/:id', async (req, res) => {
   }
 });
 
+// ── Rotas Frequência ─────────────────────────────────────────
+
+
+app.get('/api/frequencia', async (req, res) => {
+  try {
+    const { data } = req.query;
+    const query = data ? { data } : {};
+    const dados = await Frequencia.find(query);
+    res.json(dados);
+  } catch (error) {
+    res.status(500).json({ ok: false });
+  }
+});
+
+app.get('/api/frequencia/datas', async (req, res) => {
+  try {
+    const datas = await Frequencia.distinct('data');
+    res.json(datas.sort().reverse());
+  } catch (error) {
+    res.status(500).json({ ok: false });
+  }
+});
+
+
+/**
+ * POST /api/frequencia
+ * Salva presença de vários alunos para uma data específica.
+ */
+app.post('/api/frequencia', async (req, res) => {
+  try {
+    const { data, presencas } = req.body;
+    if (!data || !Array.isArray(presencas)) {
+      return res.status(400).json({ ok: false, error: 'Dados inválidos' });
+    }
+
+    const updates = presencas.map(p => ({
+      updateOne: {
+        filter: { matriculaId: p.matriculaId, data },
+        update: { $set: { matriculaId: p.matriculaId, data, presenca: p.presenca, id: Date.now() + Math.random() } },
+        upsert: true
+      }
+    }));
+
+    await Frequencia.bulkWrite(updates);
+    res.status(201).json({ ok: true });
+  } catch (error) {
+    console.error('Erro ao salvar frequência:', error);
+    res.status(500).json({ ok: false });
+  }
+});
+
+app.delete('/api/frequencia/dia/:data', async (req, res) => {
+  try {
+    await Frequencia.deleteMany({ data: req.params.data });
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ ok: false });
+  }
+});
+
+app.delete('/api/frequencia/:id', async (req, res) => {
+  try {
+    await Frequencia.findOneAndDelete({ id: Number(req.params.id) });
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ ok: false });
+  }
+});
+
+// ── Rotas Acompanhamento ──────────────────────────────────────
+
+app.get('/api/acompanhamento', async (req, res) => {
+  try {
+    const { matriculaId } = req.query;
+    const query = matriculaId ? { matriculaId: Number(matriculaId) } : {};
+    const dados = await Acompanhamento.find(query).sort({ id: -1 });
+    res.json(dados);
+  } catch (error) {
+    console.error('Erro em GET /api/acompanhamento:', error);
+    res.status(500).json({ ok: false, error: error.message });
+  }
+});
+
+app.post('/api/acompanhamento', async (req, res) => {
+  try {
+    console.log('Salvando acompanhamento:', req.body);
+    const data = { ...req.body, id: req.body.id || Date.now() + Math.random() };
+    const query = { matriculaId: Number(data.matriculaId) };
+    
+    // Pequeno ajuste para garantir que matriculaId seja número no banco também
+    data.matriculaId = Number(data.matriculaId);
+
+    const atualizado = await Acompanhamento.findOneAndUpdate(query, data, { upsert: true, new: true });
+    res.status(201).json({ ok: true, dados: atualizado });
+  } catch (error) {
+    console.error('Erro em POST /api/acompanhamento:', error);
+    res.status(500).json({ ok: false, error: error.message });
+  }
+});
+
+app.delete('/api/acompanhamento/:matriculaId', async (req, res) => {
+  try {
+    const matriculaId = Number(req.params.matriculaId);
+    const excluido = await Acompanhamento.findOneAndDelete({ matriculaId });
+    if (!excluido) return res.status(404).json({ ok: false, msg: 'Registro não encontrado' });
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Erro ao excluir acompanhamento:', error);
+    res.status(500).json({ ok: false, error: 'Erro interno no servidor' });
+  }
+});
+
 // ── Export/Start ─────────────────────────────────────────────
+
+
 if (require.main === module || process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`\n  🌿 Servidor rodando em: http://localhost:${PORT}\n`);

@@ -1125,6 +1125,34 @@
       font-size: 2rem;
       cursor: pointer;
     }
+    /* Estilos de Impressão */
+    @media print {
+      body * { visibility: hidden; }
+      #view-frequencia, #view-frequencia * { visibility: visible; }
+      #view-frequencia { position: absolute; left: 0; top: 0; width: 100%; }
+      nav, .admin-header, .admin-tabs, .btn-export, .btn-primary, #lock-screen-freq, .acomp-form-buttons { display: none !important; }
+      .admin-wrapper { border: none !important; box-shadow: none !important; padding: 0 !important; max-width: 100% !important; }
+      .table-wrap { overflow: visible !important; }
+      table { border-collapse: collapse !important; width: 100% !important; }
+      th, td { border: 1px solid #ddd !important; padding: 10px !important; color: black !important; }
+      
+      /* Mostrar apenas a seção ativa */
+      .admin-section { display: none !important; }
+      .admin-section.active { display: block !important; padding: 0 !important; }
+      
+      .print-only { display: block !important; margin-bottom: 2rem; border-bottom: 2px solid var(--olive); padding-bottom: 1rem; }
+      #print-header { display: block !important; margin-bottom: 2rem; border-bottom: 2px solid var(--olive); padding-bottom: 1rem; }
+      
+      /* Ajustes para formulários no print */
+      input, textarea, select { border: none !important; background: transparent !important; padding: 0 !important; color: black !important; font-size: 1rem !important; }
+      textarea { height: auto !important; overflow: visible !important; }
+      label { color: var(--olive-dk) !important; font-weight: bold !important; margin-top: 10px !important; display: block !important; }
+      .field-group { border-bottom: 1px solid #eee !important; padding-bottom: 5px !important; margin-bottom: 10px !important; }
+      .form-card { border: none !important; box-shadow: none !important; padding: 0 !important; }
+    }
+    .print-only { display: none; }
+    #print-header { display: none; }
+    @media print { .no-print { display: none !important; } }
   </style>
 </head>
 
@@ -1139,6 +1167,7 @@
     <div class="nav-tabs">
       <button id="tab-home" class="active" onclick="showView('home')">Início</button>
       <button id="tab-form" onclick="showView('form')">Matrícula</button>
+      <button id="tab-frequencia" onclick="tryFrequencia()">Frequência</button>
       <button id="tab-financeiro" onclick="tryFinanceiro()">Financeiro</button>
       <button id="tab-admin" onclick="tryAdmin()">Gerenciar</button>
     </div>
@@ -1310,6 +1339,194 @@
       <button class="btn-primary" onclick="newRegistration()">Nova matrícula</button>
     </div>
   </div><!-- /view-form -->
+
+  <!-- FREQUENCIA VIEW -->
+  <div id="view-frequencia" class="view">
+    <div id="lock-screen-freq" class="lock-screen" style="display:none">
+      <div class="lock-icon">📝</div>
+      <h2>Chamada / Frequência</h2>
+      <p>Área restrita para controle de presença.</p>
+      <input type="password" id="freqPass" placeholder="Senha" onkeydown="if(event.key==='Enter')checkFreqPass()" />
+      <button class="btn-primary" onclick="checkFreqPass()">Entrar</button>
+      <p class="error-msg" id="freqPassError"></p>
+    </div>
+
+    <div id="freq-panel" style="display:none">
+      <div class="admin-wrapper" style="max-width: 1000px">
+        <div class="admin-header">
+          <h2>📝 Controle e Relatórios</h2>
+          <button class="btn-export" style="background:var(--danger)" onclick="lockFreq()">🔒 Sair</button>
+        </div>
+
+        <div class="admin-tabs">
+          <button id="freq-tab-chamada" class="active" onclick="showFreqSection('chamada')">Chamada</button>
+          <button id="freq-tab-historico" onclick="showFreqSection('historico')">Histórico</button>
+          <button id="freq-tab-relatorio" onclick="showFreqSection('relatorio')">Relatório de Frequência</button>
+          <button id="freq-tab-quadro-ped" onclick="showFreqSection('quadro-ped')">Quadro Pedagógico</button>
+          <button id="freq-tab-acompanhamento" onclick="showFreqSection('acompanhamento')">Acompanhamento Individual</button>
+        </div>
+
+        <!-- Seção Chamada -->
+        <div id="freq-sec-chamada" class="admin-section active">
+          <div class="controls-row">
+             <label>Data da Chamada:</label>
+             <input type="date" id="freq-data-selecionada" class="filter-select" onchange="loadFrequencia()" />
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Aluno</th>
+                  <th>Faixa</th>
+                  <th style="text-align:center">Presença (Sim/Não)</th>
+                </tr>
+              </thead>
+              <tbody id="frequenciaBody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn-export" id="btnDelFreq" style="background:var(--danger); display:none" onclick="deleteDayAttendance()">🗑 Excluir Chamada deste Dia</button>
+            <button class="btn-primary" id="btnSalvarFreq" onclick="saveFrequencia()">Salvar Chamada</button>
+          </div>
+        </div>
+
+        <!-- Seção Histórico -->
+        <div id="freq-sec-historico" class="admin-section">
+          <div class="admin-header">
+            <h4>Dias com Chamada Realizada</h4>
+          </div>
+          <p>Selecione um dia abaixo para visualizar ou editar a frequência:</p>
+          <div id="historicoDatasList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; margin-top: 1.5rem">
+            <!-- Botões de data -->
+          </div>
+        </div>
+
+        <!-- Seção Relatório Global -->
+        <div id="freq-sec-relatorio" class="admin-section">
+          <!-- Cabeçalho de Impressão (Oculto na Web) -->
+          <div id="print-header">
+            <h1 style="color:var(--olive); margin:0">GEDCC - DIJ 2026</h1>
+            <h3 style="margin:5px 0">Relatório Consolidado de Frequência</h3>
+            <p id="print-date" style="font-size:0.9rem; color:#666"></p>
+          </div>
+
+          <div class="admin-header">
+            <h4>Resumo de Assiduidade</h4>
+            <div style="display:flex; gap:0.5rem">
+              <button class="btn-export" style="background:var(--olive)" onclick="printRelatorio()">🖨 Gerar PDF / Imprimir</button>
+              <button class="btn-export" onclick="exportRelatorioGlobal()">⬇ CSV</button>
+            </div>
+          </div>
+
+          <!-- Resumo Estatístico -->
+          <div id="relatorio-summary" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem">
+             <div class="stat-card" style="padding:10px; border-radius:8px; border:1px solid #eee">
+                <div style="font-size:0.8rem; color:#666">Total de Alunos</div>
+                <div id="stat-rel-total" style="font-size:1.2rem; font-weight:bold">0</div>
+             </div>
+             <div class="stat-card" style="padding:10px; border-radius:8px; border:1px solid #eee">
+                <div style="font-size:0.8rem; color:#666">Aulas Registradas</div>
+                <div id="stat-rel-aulas" style="font-size:1.2rem; font-weight:bold">0</div>
+             </div>
+             <div class="stat-card" style="padding:10px; border-radius:8px; border:1px solid #eee">
+                <div style="font-size:0.8rem; color:#666">Média Geral</div>
+                <div id="stat-rel-media" style="font-size:1.2rem; font-weight:bold">0%</div>
+             </div>
+          </div>
+
+          <div class="table-wrap">
+            <table style="background: white">
+              <thead>
+                <tr style="background:#f8f9fa">
+                  <th>Aluno</th>
+                  <th>Faixa</th>
+                  <th style="text-align:center">Aulas</th>
+                  <th style="text-align:center">Presenças</th>
+                  <th style="text-align:center">Freq. (%)</th>
+                </tr>
+              </thead>
+              <tbody id="relatorioGlobalBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Seção Quadro Pedagógico -->
+        <div id="freq-sec-quadro-ped" class="admin-section">
+          <!-- Cabeçalho de Impressão -->
+          <div class="print-only" id="print-header-ped">
+             <h1 style="color:var(--olive); margin:0">GEDCC - DIJ 2026</h1>
+             <h3 style="margin:5px 0">Quadro Consolidado Pedagógico</h3>
+             <p class="print-date-field" style="font-size:0.9rem; color:#666"></p>
+          </div>
+
+          <div class="admin-header">
+            <h4>Quadro Pedagógico</h4>
+            <div style="display:flex; gap:0.5rem">
+              <button class="btn-export" style="background:var(--olive)" onclick="printQuadroPed()">🖨 Gerar PDF / Imprimir</button>
+              <button class="btn-export" onclick="exportQuadroPedCSV()">⬇ CSV</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table style="background: white">
+              <thead>
+                <tr style="background:#f8f9fa">
+                  <th>Aluno</th>
+                  <th>Desempenho</th>
+                  <th>Metas</th>
+                  <th>Atividades</th>
+                  <th>Obs.</th>
+                  <th style="text-align:center" class="no-print">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="quadroPedagogicoBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Seção Acompanhamento -->
+        <div id="freq-sec-acompanhamento" class="admin-section">
+          <!-- Cabeçalho de Impressão -->
+          <div class="print-only" id="print-header-acomp">
+             <h1 style="color:var(--olive); margin:0">GEDCC - DIJ 2026</h1>
+             <h3 style="margin:5px 0">Acompanhamento Pedagógico Individual</h3>
+             <p class="print-date-field" style="font-size:0.9rem; color:#666"></p>
+          </div>
+
+          <div class="form-card">
+            <h4>Ficha Pedagógica do Aluno</h4>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem">
+              <div class="field-group">
+                <label>Selecionar Aluno</label>
+                <select id="acomp-aluno" class="filter-select" onchange="loadAcompanhamento()"></select>
+              </div>
+              <div class="field-group">
+                <label>Desempenho (Nota/Conceito)</label>
+                <input type="text" id="acomp-desempenho" placeholder="Ex: Ótimo, participativo...">
+              </div>
+              <div class="field-group full" style="grid-column: 1/-1">
+                <label>Metas para o Aluno</label>
+                <textarea id="acomp-metas" placeholder="Quais objetivos queremos alcançar?"></textarea>
+              </div>
+              <div class="field-group" style="grid-column: 1/-1">
+                <label>Atividades Sugeridas</label>
+                <textarea id="acomp-atividades" placeholder="Atividades específicas para o desenvolvimento..."></textarea>
+              </div>
+              <div class="field-group" style="grid-column: 1/-1">
+                <label>Observações Gerais</label>
+                <textarea id="acomp-obs" placeholder="Outras notas importantes..."></textarea>
+              </div>
+            </div>
+            <div class="acomp-form-buttons" style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+              <button class="btn-export" id="btnPrintFicha" style="background:var(--olive)" onclick="printFichaIndividual()">🖨 Imprimir Ficha deste Aluno</button>
+              <button class="btn-primary" onclick="saveAcompanhamento()">Salvar Ficha</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- ADMIN VIEW -->
   <div id="view-admin" class="view">
@@ -1619,7 +1836,9 @@
   <script>
     // ── Config ──────────────────────────────────────────────
     const ADMIN_PASSWORD = 'dij2026'; // ← altere aqui
+    const FREQ_PASSWORD = 'freq2026';  // ← senha diferente
     const API = '/api/matriculas';
+    const API_FREQ = '/api/frequencia';
 
     // Cache local para filtros/busca sem requests repetidas
     let _cache = [];
@@ -1656,6 +1875,55 @@
         showView('admin', 'admin');
         unlockAdmin();
       }
+    }
+
+    function tryFrequencia() {
+      if (!sessionStorage.getItem('dij_freq_ok')) {
+        showView('frequencia', 'frequencia');
+        document.getElementById('lock-screen-freq').style.display = 'block';
+        document.getElementById('freq-panel').style.display = 'none';
+      } else {
+        showView('frequencia', 'frequencia');
+        unlockFrequencia();
+      }
+    }
+
+    function showFreqSection(sec) {
+      document.querySelectorAll('#view-frequencia .admin-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('freq-sec-' + sec).classList.add('active');
+      document.querySelectorAll('#view-frequencia .admin-tabs button').forEach(b => b.classList.remove('active'));
+      document.getElementById('freq-tab-' + sec).classList.add('active');
+
+      if (sec === 'relatorio') loadRelatorioGlobal();
+      if (sec === 'acompanhamento') updateAcompStudentList();
+      if (sec === 'historico') loadAttendanceDates();
+      if (sec === 'quadro-ped') loadRelatorioPedagogico();
+    }
+
+    function checkFreqPass() {
+      const val = document.getElementById('freqPass').value;
+      if (val === FREQ_PASSWORD) {
+        sessionStorage.setItem('dij_freq_ok', '1');
+        document.getElementById('freqPass').value = '';
+        document.getElementById('freqPassError').textContent = '';
+        unlockFrequencia();
+      } else {
+        document.getElementById('freqPassError').textContent = '❌ Senha incorreta.';
+        document.getElementById('freqPass').value = '';
+      }
+    }
+
+    function unlockFrequencia() {
+      document.getElementById('lock-screen-freq').style.display = 'none';
+      document.getElementById('freq-panel').style.display = 'block';
+      const inputData = document.getElementById('freq-data-selecionada');
+      if (!inputData.value) inputData.value = new Date().toISOString().slice(0, 10);
+      loadFrequencia();
+    }
+
+    function lockFreq() {
+      sessionStorage.removeItem('dij_freq_ok');
+      showView('home');
     }
 
     function tryFinanceiro() {
@@ -1808,6 +2076,361 @@
         loadFinanceiro();
       } catch {
         showToast('❌ Erro ao excluir.');
+      }
+    }
+
+    // ── Frequência ──────────────────────────────────────────
+    let _freqCache = [];
+
+    async function loadFrequencia() {
+      const data = document.getElementById('freq-data-selecionada').value;
+      if (!data) return;
+
+      try {
+        // Primeiro carregar alunos matriculados se não tiver em cache
+        if (!_cache.length) {
+          const resM = await fetch(API);
+          _cache = await resM.json();
+        }
+
+        const resF = await fetch(`${API_FREQ}?data=${data}`);
+        _freqCache = await resF.json();
+        renderFrequencia();
+      } catch (err) {
+        showToast('⚠ Erro ao carregar frequência.');
+      }
+    }
+
+    function renderFrequencia() {
+      const body = document.getElementById('frequenciaBody');
+      body.innerHTML = '';
+      
+      // Filtra apenas alunos confirmados (Sim)
+      const alunos = _cache.filter(r => r.confirmacao === 'Sim');
+      
+      if (!alunos.length) {
+        body.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:2rem; color:var(--text-muted)">Nenhum aluno confirmado encontrado para 2026.</td></tr>';
+        return;
+      }
+
+      const numAlunos = alunos.length;
+      const numPresencas = _freqCache.filter(f => f.presenca).length;
+      
+      // Mostrar botão de excluir se houver registros
+      document.getElementById('btnDelFreq').style.display = _freqCache.length > 0 ? 'block' : 'none';
+
+      alunos.forEach(a => {
+        const id = a.id; 
+        const registro = _freqCache.find(f => f.matriculaId === id);
+        const checked = registro && registro.presenca ? 'checked' : '';
+        const textoPresenca = (registro && registro.presenca) ? 'Sim' : 'Não';
+        const faixaBadge = a.faixa === 'infancia' ? '👶 Infância' : '🌱 Juventude';
+
+        body.innerHTML += `
+          <tr>
+            <td><strong>${esc(a.nome)}</strong></td>
+            <td><span class="badge ${a.faixa === 'infancia' ? 'badge-infancia' : 'badge-juventude'}">${faixaBadge}</span></td>
+            <td style="text-align:center">
+              <label style="display:flex; align-items:center; justify-content:center; gap:0.5rem; cursor:pointer">
+                <input type="checkbox" class="freq-check" data-id="${id}" ${checked} 
+                       onchange="this.nextElementSibling.innerText = this.checked ? 'Sim' : 'Não'"
+                       style="width:20px; height:20px; accent-color:var(--olive)">
+                <span style="font-size:0.9rem; min-width:30px">${textoPresenca}</span>
+              </label>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    async function saveFrequencia() {
+      const data = document.getElementById('freq-data-selecionada').value;
+      const btn = document.getElementById('btnSalvarFreq');
+      const checks = document.querySelectorAll('.freq-check');
+      
+      const presencas = Array.from(checks).map(c => ({
+        matriculaId: Number(c.dataset.id),
+        presenca: c.checked
+      }));
+
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+
+      try {
+        const res = await fetch(API_FREQ, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data, presencas })
+        });
+
+        if (res.ok) {
+          showToast('✅ Frequência salva com sucesso!');
+        } else {
+          throw new Error();
+        }
+      } catch {
+        showToast('❌ Erro ao salvar frequência.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Salvar Chamada';
+      }
+    }
+
+    // ── Relatórios e Acompanhamento ──────────────────────────
+    const API_ACOMP = '/api/acompanhamento';
+
+    async function loadRelatorioGlobal() {
+      try {
+        const [resM, resF] = await Promise.all([fetch(API), fetch(API_FREQ)]);
+        _cache = await resM.json();
+        const allFreq = await resF.json();
+
+        const body = document.getElementById('relatorioGlobalBody');
+        body.innerHTML = '';
+
+        const alunos = _cache.filter(r => r.confirmacao === 'Sim');
+        const datasUnicas = [...new Set(allFreq.map(f => f.data))].length;
+        
+        let somaPerc = 0;
+
+        alunos.forEach(a => {
+          const id = a.id;
+          const presencas = allFreq.filter(f => f.matriculaId === id && f.presenca).length;
+          const perc = datasUnicas > 0 ? (presencas / datasUnicas) * 100 : 0;
+          somaPerc += perc;
+
+          body.innerHTML += `
+            <tr>
+              <td><strong>${esc(a.nome)}</strong></td>
+              <td><span class="badge ${a.faixa === 'infancia' ? 'badge-infancia' : 'badge-juventude'}">${a.faixa}</span></td>
+              <td style="text-align:center">${datasUnicas}</td>
+              <td style="text-align:center">${presencas}</td>
+              <td style="text-align:center"><strong>${perc.toFixed(1)}%</strong></td>
+            </tr>
+          `;
+        });
+
+        // Atualizar Resumo
+        document.getElementById('stat-rel-total').innerText = alunos.length;
+        document.getElementById('stat-rel-aulas').innerText = datasUnicas;
+        const mediaGeral = alunos.length > 0 ? (somaPerc / alunos.length).toFixed(1) : '0.0';
+        document.getElementById('stat-rel-media').innerText = mediaGeral + '%';
+
+      } catch (err) {
+        console.error(err);
+        showToast('⚠ Erro ao carregar relatório.');
+      }
+    }
+
+    function printRelatorio() {
+      const d = new Date();
+      document.querySelectorAll('.print-date-field').forEach(el => el.innerText = `Gerado em: ${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR')}`);
+      window.print();
+    }
+
+    async function loadRelatorioPedagogico() {
+      try {
+        const [resM, resA] = await Promise.all([fetch(API), fetch(API_ACOMP)]);
+        const alunos = (await resM.json()).filter(a => a.confirmacao === 'Sim');
+        const acomps = await resA.json();
+
+        const body = document.getElementById('quadroPedagogicoBody');
+        body.innerHTML = '';
+
+        alunos.forEach(a => {
+           const info = acomps.find(ac => ac.matriculaId === a.id) || {};
+           body.innerHTML += `
+             <tr>
+               <td><strong>${esc(a.nome)}</strong></td>
+               <td>${esc(info.notaDesempenho || '-')}</td>
+               <td>${esc(info.metas || '-')}</td>
+               <td>${esc(info.atividades || '-')}</td>
+               <td>${esc(info.observacoes || '-')}</td>
+               <td style="text-align:center" class="no-print">
+                  <button class="btn-secondary" style="color:var(--olive); text-decoration:none; margin-right:8px" onclick="editPedagogico(${a.id})" title="Editar">Editar</button>
+                  <button class="btn-secondary" style="color:var(--danger); text-decoration:none" onclick="deletePedagogico(${a.id})" title="Excluir">Excluir</button>
+               </td>
+             </tr>
+           `;
+        });
+      } catch {
+        showToast('⚠ Erro ao carregar quadro pedagógico.');
+      }
+    }
+
+    function editPedagogico(matriculaId) {
+       showFreqSection('acompanhamento');
+       const sel = document.getElementById('acomp-aluno');
+       sel.value = matriculaId;
+       loadAcompanhamento();
+    }
+
+    async function deletePedagogico(matriculaId) {
+       if (!confirm('Deseja realmente excluir o registro pedagógico deste aluno?')) return;
+       try {
+          const res = await fetch(`/api/acompanhamento/${matriculaId}`, { method: 'DELETE' });
+          if (res.ok) {
+             showToast('✅ Registro excluído com sucesso.');
+             loadRelatorioPedagogico();
+          } else {
+             showToast('❌ Erro ao excluir registro.');
+          }
+       } catch (err) {
+          console.error(err);
+          showToast('❌ Erro de conexão ao excluir.');
+       }
+    }
+
+    function printQuadroPed() {
+       const d = new Date();
+       document.querySelectorAll('.print-date-field').forEach(el => el.innerText = `Gerado em: ${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR')}`);
+       window.print();
+    }
+
+    function printFichaIndividual() {
+       const d = new Date();
+       document.querySelectorAll('.print-date-field').forEach(el => el.innerText = `Gerado em: ${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR')}`);
+       window.print();
+    }
+
+    function exportQuadroPedCSV() {
+      const rows = Array.from(document.querySelectorAll('#quadroPedagogicoBody tr'));
+      if (!rows.length) return showToast('⚠ Sem dados.');
+
+      let csv = 'Aluno;Desempenho;Metas;Atividades;Observacoes\n';
+      rows.forEach(r => {
+        const cols = Array.from(r.querySelectorAll('td')).map(c => c.innerText.replace(/;/g, ','));
+        csv += cols.join(';') + '\n';
+      });
+
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `quadro_pedagogico_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+    }
+
+    function exportRelatorioGlobal() {
+      const rows = Array.from(document.querySelectorAll('#relatorioGlobalBody tr'));
+      if (!rows.length) return showToast('⚠ Sem dados.');
+      
+      const csv = 'Aluno,Faixa,Total Aulas,Presenças,Frequência (%)\n' + 
+        rows.map(tr => Array.from(tr.cells).map(td => td.innerText.replace('%','')).join(',')).join('\n');
+      
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `relatorio_frequencia_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    }
+
+    function updateAcompStudentList() {
+      const sel = document.getElementById('acomp-aluno');
+      sel.innerHTML = '<option value="">Selecione o aluno...</option>';
+      _cache.filter(r => r.confirmacao === 'Sim').forEach(a => {
+        sel.innerHTML += `<option value="${a.id}">${esc(a.nome)}</option>`;
+      });
+    }
+
+    async function loadAcompanhamento() {
+      const id = document.getElementById('acomp-aluno').value;
+      if (!id) return;
+      
+      try {
+        const res = await fetch(`${API_ACOMP}?matriculaId=${id}`);
+        const json = await res.json();
+        
+        if (!Array.isArray(json)) {
+           console.error('Resposta da API não é um array:', json);
+           throw new Error('Formato inválido');
+        }
+
+        const dados = json[0];
+        if (dados) {
+          document.getElementById('acomp-desempenho').value = dados.notaDesempenho || '';
+          document.getElementById('acomp-metas').value = dados.metas || '';
+          document.getElementById('acomp-atividades').value = dados.atividades || '';
+          document.getElementById('acomp-obs').value = dados.observacoes || '';
+        } else {
+          document.getElementById('acomp-desempenho').value = '';
+          document.getElementById('acomp-metas').value = '';
+          document.getElementById('acomp-atividades').value = '';
+          document.getElementById('acomp-obs').value = '';
+        }
+      } catch (err) {
+        console.error('Erro ao carregar acompanhamento:', err);
+        showToast('⚠ Erro ao carregar ficha.');
+      }
+    }
+
+    async function saveAcompanhamento() {
+      const id = document.getElementById('acomp-aluno').value;
+      if (!id) return showToast('⚠ Selecione um aluno.');
+
+      const record = {
+        matriculaId: Number(id),
+        notaDesempenho: document.getElementById('acomp-desempenho').value,
+        metas: document.getElementById('acomp-metas').value,
+        atividades: document.getElementById('acomp-atividades').value,
+        observacoes: document.getElementById('acomp-obs').value
+      };
+
+      try {
+        await fetch(API_ACOMP, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record)
+        });
+        showToast('✅ Ficha pedagógica salva!');
+      } catch {
+        showToast('❌ Erro ao salvar ficha.');
+      }
+    }
+
+    async function loadAttendanceDates() {
+      try {
+        const res = await fetch('/api/frequencia/datas');
+        const datas = await res.json();
+        const list = document.getElementById('historicoDatasList');
+        list.innerHTML = '';
+        
+        if (!datas.length) {
+          list.innerHTML = '<p>Nenhuma chamada registrada ainda.</p>';
+          return;
+        }
+
+        datas.forEach(d => {
+          // Formatar data para exibição PT-BR
+          const [y, m, day] = d.split('-');
+          const display = `${day}/${m}/${y}`;
+          list.innerHTML += `<button class="btn-primary" style="background:#f0f0f0; color:var(--dark); border:1px solid #ccc" 
+                                     onclick="selectHistoryDate('${d}')">📅 ${display}</button>`;
+        });
+      } catch {
+        showToast('⚠ Erro ao carregar datas.');
+      }
+    }
+
+    function selectHistoryDate(d) {
+      document.getElementById('freq-data-selecionada').value = d;
+      showFreqSection('chamada');
+      loadFrequencia();
+    }
+
+    async function deleteDayAttendance() {
+      const data = document.getElementById('freq-data-selecionada').value;
+      if (!confirm(`Tem certeza que deseja EXCLUIR TODA a chamada do dia ${data}?`)) return;
+
+      try {
+        const res = await fetch(`/api/frequencia/dia/${data}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('🗑 Chamada excluída!');
+          loadFrequencia();
+        } else {
+          showToast('❌ Erro ao excluir.');
+        }
+      } catch {
+        showToast('❌ Erro de conexão.');
       }
     }
 
