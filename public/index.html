@@ -67,6 +67,14 @@
       font-size: 1.2rem;
       font-weight: 800;
       letter-spacing: .5px;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .brand-logo {
+      height: 60px;
+      width: auto;
     }
 
     .nav-tabs {
@@ -1124,7 +1132,10 @@
 
   <!-- NAV -->
   <nav>
-    <span class="brand">🌿 DIJ – GEDCC</span>
+    <span class="brand">
+      <img src="logo-gedcc.png" alt="Logo Sol" class="brand-logo">
+      DIJ – GEDCC
+    </span>
     <div class="nav-tabs">
       <button id="tab-home" class="active" onclick="showView('home')">Início</button>
       <button id="tab-form" onclick="showView('form')">Matrícula</button>
