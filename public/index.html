@@ -1200,12 +1200,13 @@
       }
 
       .banner-frame {
-        padding-top: 50%; /* Aumenta a proporção no mobile */
+        padding-top: 32%; /* Ajuste fino para mobile */
         border-top-width: 15px;
       }
       
       .banner-frame img {
-        margin-top: -45%; /* Ajuste fino para mobile */
+        margin-top: -28%; /* Alinhamento proporcional para cortar as bordas pretas */
+        transform: scale(1.05); /* Leve zoom para evitar falhas de antialiasing no mobile */
       }
 
       .home-grid {
