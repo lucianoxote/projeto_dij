@@ -5,6 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Matrículas DIJ – GEDCC</title>
+  <link rel="icon" type="image/png" href="logo-gedcc.png" />
+  <link rel="apple-touch-icon" href="logo-gedcc.png" />
+  <meta name="theme-color" content="#839151">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet" />
   <meta name="color-scheme" content="light">
@@ -1126,6 +1129,160 @@
       cursor: pointer;
     }
     /* Estilos de Impressão */
+    /* Estilos Responsivos Adicionais */
+    .menu-toggle {
+      display: none;
+      background: var(--sage);
+      border: none;
+      border-radius: 8px;
+      width: 45px;
+      height: 45px;
+      font-size: 1.5rem;
+      color: var(--olive-dk);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 0 1rem;
+      }
+      
+      .brand {
+        font-size: 1rem !important;
+      }
+      
+      .brand-logo {
+        height: 45px !important;
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+
+      .nav-tabs {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: var(--white);
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1rem;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+        border-bottom: 2px solid var(--sage);
+        transform: translateY(-150%);
+        transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 90;
+        align-items: stretch;
+      }
+
+      .nav-tabs.open {
+        transform: translateY(0);
+      }
+
+      .nav-tabs button {
+        width: 100%;
+        text-align: center;
+        padding: 0.8rem;
+      }
+
+      /* Home Responsivo */
+      .welcome-header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .welcome-header p {
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+      }
+
+      .banner-frame {
+        padding-top: 50%; /* Aumenta a proporção no mobile */
+        border-top-width: 15px;
+      }
+      
+      .banner-frame img {
+        margin-top: -45%; /* Ajuste fino para mobile */
+      }
+
+      .home-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem 2rem;
+      }
+
+      /* Admin & Frequência */
+      .admin-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.5rem;
+        display: block; /* Permite scroll se necessário */
+      }
+      
+      .admin-tabs button {
+        display: inline-block;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .finance-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      /* Modals */
+      .modal {
+        padding: 1.25rem;
+      }
+      
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Form */
+      .form-wrapper {
+        margin-top: 1rem;
+      }
+      
+      .form-header-card h1 {
+        font-size: 1.5rem;
+      }
+
+      .form-actions {
+        flex-direction: column-reverse;
+      }
+      
+      .form-actions button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .welcome-header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .brand span {
+        display: none; /* Esconde texto longo no mobile muito pequeno se necessário */
+      }
+    }
+
     @media print {
       body * { visibility: hidden; }
       #view-frequencia, #view-frequencia * { visibility: visible; }
@@ -1164,7 +1321,10 @@
       <img src="logo-gedcc.png" alt="Logo Sol" class="brand-logo">
       DIJ – GEDCC
     </span>
-    <div class="nav-tabs">
+    <button class="menu-toggle" id="menu-toggle" onclick="toggleMenu()" aria-label="Abrir Menu">
+      <i>☰</i>
+    </button>
+    <div class="nav-tabs" id="nav-tabs">
       <button id="tab-home" class="active" onclick="showView('home')">Início</button>
       <button id="tab-form" onclick="showView('form')">Matrícula</button>
       <button id="tab-frequencia" onclick="tryFrequencia()">Frequência</button>
@@ -1844,7 +2004,18 @@
     let _cache = [];
 
     // ── Navigation ─────────────────────────────────────────
+    function toggleMenu() {
+      const tabs = document.getElementById('nav-tabs');
+      tabs.classList.toggle('open');
+      const toggle = document.getElementById('menu-toggle');
+      toggle.innerHTML = tabs.classList.contains('open') ? '<i>✕</i>' : '<i>☰</i>';
+    }
+
     function showView(view, tab = null) {
+      // Fecha o menu mobile ao trocar de view
+      document.getElementById('nav-tabs').classList.remove('open');
+      document.getElementById('menu-toggle').innerHTML = '<i>☰</i>';
+
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       const targetView = document.getElementById('view-' + view);
       if (targetView) targetView.classList.add('active');
