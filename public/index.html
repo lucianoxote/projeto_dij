@@ -1200,18 +1200,16 @@
       }
 
       .banner-frame {
-        padding-top: 35%; /* Altura estável para mobile */
+        padding-top: 28%; /* Mantém a proporção próxima do desktop */
         border-top-width: 15px;
       }
       
       .banner-frame img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
+        height: auto;
         top: 0;
-        margin-top: 0;
-        transform: scale(1.4); /* Zoom definitivo para cortar qualquer barra preta lateral ou de topo/fundo */
+        margin-top: -24%; /* Ajuste para centralizar verticalmente no mobile */
+        transform: scale(1.02); /* Zoom mínimo apenas para cobrir bordas finas */
       }
 
       .home-grid {
